@@ -5,7 +5,7 @@ export const createNeuron = (newId, x,
     time) => [{
         data: {
             id: newId,
-            label: ""
+            label: newId
         },
         position: { x: x, y: y },
         classes: 'snapse-node'

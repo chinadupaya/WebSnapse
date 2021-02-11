@@ -43,6 +43,17 @@ function App() {
       name: event.target.name,
       value: event.target.value,
     });
+  };
+  const onEdgeCreate = (src, dst) =>{
+    console.log("newEdge",src, dst);
+    let newElements = JSON.parse(JSON.stringify(elements));
+    newElements.edges.push({
+      data: {
+        id: src+'-'+dst,
+        source: src,
+        target: dst
+      }
+    })
   }
   async function handleNewNode(event) {
     event.preventDefault();
@@ -64,7 +75,6 @@ function App() {
     newElements.nodes.push(newNodes[1])
     newElements.nodes.push(newNodes[2])
     newElements.nodes.push(newNodes[3])
-    console.log(newElements)
     setElements(newElements);
   }
   const handleClose = () => setShowNewNodeModal(false);
@@ -77,7 +87,10 @@ function App() {
       </div>
       <hr />
       <Snapse
-        elements={elements} />
+        elements={elements} 
+        onEdgeCreate={(src,dst)=>{
+          onEdgeCreate(src.id(), dst.id())
+        }}/>
       <Modal show={showNewNodeModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Create New Node</Modal.Title>
