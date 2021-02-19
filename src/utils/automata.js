@@ -27,25 +27,24 @@ export function canUseRule(requires, symbol, spikes){
     }
     return false;
 }
-export function step(neurons, prevStates){
-    console.log(prevStates);
-    const newStates = produce(prevStates, states =>{
+export function step(neurons){
+    const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
-        for (var k in neurons){
-            var neuron = neurons[k];
-            states[k] = states[k] || initializeState(neuron);
-            var state = states[k];
+        for (var k in draft){
+            var neuron = draft[k];
+            //states[k] = states[k] || initializeState(neuron);
+            //var state = states[k];
             //choose rule to follow if not working on a rule currently
-            if(!state.currentRule && !neuron.isOutput){
+            if(!neuron.currentRule && !neuron.isOutput){
                 //pick a rule
                 var rules = neuron.rules.split(' ');
                 for (var i=0;i<rules.length;i++){
                     var [requires, symbol, consumes, produces, delay] = parseRule(rules[i]);
-                    if(canUseRule(requires,symbol,state.spikes)){
+                    if(canUseRule(requires,symbol,neuron.spikes)){
                         console.log("Use rule",rules[i]);
                         //TO DO accept non-determinism
-                        state.currentRule = rules[i];
-                        state.delay = delay;
+                        draft[neuron.id].currentRule = rules[i];
+                        draft[neuron.id].delay = delay;
                         //state.spikes-=consumes;
                         //console.log(state);
                     }else{

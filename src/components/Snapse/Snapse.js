@@ -3,12 +3,15 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import stylesheet from '../stylesheet'
 import cytoscape, { Core as CSCore } from "cytoscape";
 import useAnimateEdges from './useAnimateEdges';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { convertElements } from '../../utils/helpers';
 
-const Snapse = ({ elements, onEdgeCreate }) => {
+const Snapse = ({ neurons, onEdgeCreate }) => {
   const [cyRef, setCy] = useAnimateEdges()
+  const elements = convertElements(neurons);
+  /*  useMemo(()=>
+    convertElements(neurons), []) */
   useEffect(()=>{
-    console.log(elements);
     const cy = cyRef.current
     if(cy){
       cy.edgehandles({
@@ -21,7 +24,7 @@ const Snapse = ({ elements, onEdgeCreate }) => {
         complete: onEdgeCreate
       })
     }
-  },[cyRef])
+  },[cyRef]);
   return (
     <CytoscapeComponent
       cy={setCy}

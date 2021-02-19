@@ -94,7 +94,7 @@ export const convertElements = elements =>{
     for (var k in elements) {
         var element = elements[k];
         if(!element.isOutput){
-            var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, 0);
+            var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, element.delay);
             array.nodes.push(newNodes[0])
             array.nodes.push(newNodes[1])
             array.nodes.push(newNodes[2])

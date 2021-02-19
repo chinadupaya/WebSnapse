@@ -1,5 +1,6 @@
 # TO DO
 - Accept non-determinism when choosing rules in automata.js
+- Use immer to setState onCreateNode/Edge/OutputNode
 
 # Getting Started with Create React App
 

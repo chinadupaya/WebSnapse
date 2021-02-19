@@ -83,8 +83,8 @@ const formReducer = (state, event) => {
 
 function App() {
   const [elements, setElements] = useState(convertElements(originalNeurons));
+  const [neurons,setNeurons] = useState(originalNeurons);
   const [neuronsState, setNeuronsState] = useState(() => initialize(originalNeurons))
-  const [neurons, setNeurons] = useState(originalNeurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {});
   const [submitting, setSubmitting] = useState(false);
@@ -158,11 +158,11 @@ function App() {
   }
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
-  const onForward = (n) => {
+  const onForward = async (neurons) => {
     console.log("Forward step");
-    setNeuronsState(neuronsState => step(n, neuronsState));
-    console.log(neurons);
-    console.log(neuronsState);
+    await setNeurons(neurons => step(neurons));
+    //console.log(neurons);
+    //console.log(neuronsState);
 
   }
   const neuronsRef = useRef(originalNeurons)
@@ -193,7 +193,7 @@ function App() {
       </div>
       <hr />
       <Snapse
-        elements={elements}
+        neurons={neurons}
         onEdgeCreate={(src, dst) => {
           onEdgeCreate(src.id(), dst.id())
         }} />
