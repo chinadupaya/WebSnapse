@@ -37,7 +37,23 @@ export const createNeuron = (newId, x,
         position: { x: x, y: y + 90 },
         classes: 'snapse-node__time'
     }];
-
+export const createOutputNeuron = (id,x,y,label,output,spike) => [
+    {
+        data: { rootId: id, id: `${id}`, label },
+        classes: 'snapse-output',
+        position: { x: 0, y: 0 }
+      },
+      {
+        data: { rootId: id, id: `${id}-output`, parent: id, label: output },
+        classes: 'snapse-node__output',
+        position: { x, y: y }
+      },
+      {
+        data: { rootId: id, id: `${id}-spike`, parent: id, label: spike },
+        classes: 'snapse-node__spike',
+        position: { x, y: y + 40 }
+      }
+]
 export const checkValidRule = (rule) =>{
     var pattern = /(a+)\/(a+)->(a+);([0-9]+)/;
     var result = pattern.exec(rule);
@@ -77,15 +93,27 @@ export const convertElements = elements =>{
     }
     for (var k in elements) {
         var element = elements[k];
-        var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, 0);
-        array.nodes.push(newNodes[0])
-        array.nodes.push(newNodes[1])
-        array.nodes.push(newNodes[2])
-        array.nodes.push(newNodes[3])
-        for (var i=0; i< element.out.length; i++){
-            var newEdges = createEdge(element.id, element.out[i]);
-            array.edges.push(newEdges);
-        }
+        if(!element.isOutput){
+            var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, 0);
+            array.nodes.push(newNodes[0])
+            array.nodes.push(newNodes[1])
+            array.nodes.push(newNodes[2])
+            array.nodes.push(newNodes[3])
+            
+        }else{
+            var newOutputNode = createOutputNeuron(element.id, element.position.x,element.position.y, element.id, '', 0);
+            array.nodes.push(newOutputNode[0])
+            array.nodes.push(newOutputNode[1])
+            array.nodes.push(newOutputNode[2])
+        } 
+        if(element.out){
+            for (var i=0; i< element.out.length; i++){
+                var newEdges = createEdge(element.id, element.out[i]);
+                array.edges.push(newEdges);
+            }
+        }  
+        
+        
     }
     return array;
 }

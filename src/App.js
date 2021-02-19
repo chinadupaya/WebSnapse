@@ -28,13 +28,14 @@ const originalNeurons = {
     rules: 'a/a->a;0',
     spikes: 0,
     isOutput:false,
-    out:[]
+    out:["n4"]
   },
-/*    n4: {
+   n4: {
     id: "n4",
     position: {x: 400, y:200},
-    isOutput:true
-  }  */
+    isOutput:true,
+    spikes: 0
+  }  
 }
 /* const originalElements = {
   nodes: [
