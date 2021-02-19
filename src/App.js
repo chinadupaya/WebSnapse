@@ -6,6 +6,7 @@ import Snapse from "./components/Snapse/Snapse";
 import shortid from "shortid";
 import { initialize,step } from "./utils/automata";
 import { createNeuron, convertElements, allRulesValid } from "./utils/helpers";
+import produce from "immer";
 const originalNeurons = {
   n1: {
     id: "n1",
@@ -114,6 +115,13 @@ function App() {
     })
     originalNeurons[src].out.push(dst);
   }
+  const handleNewPosition = async (position, id) =>{
+    console.log(position, id);
+    const newPosition = await produce(neurons, draft => {
+      draft[id].position = position;
+    })
+    setNeurons(newPosition);
+  }
   async function handleNewNode(event) {
     event.preventDefault();
     let newId = shortid.generate();
@@ -196,7 +204,8 @@ function App() {
         neurons={neurons}
         onEdgeCreate={(src, dst) => {
           onEdgeCreate(src.id(), dst.id())
-        }} />
+        }}
+        handleChangePosition={handleNewPosition} />
       <Modal show={showNewNodeModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Create New Node</Modal.Title>
