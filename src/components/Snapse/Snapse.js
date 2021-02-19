@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 const Snapse = ({ elements, onEdgeCreate }) => {
   const [cyRef, setCy] = useAnimateEdges()
   useEffect(()=>{
+    console.log(elements);
     const cy = cyRef.current
     if(cy){
       cy.edgehandles({

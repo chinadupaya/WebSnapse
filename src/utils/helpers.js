@@ -13,7 +13,7 @@ export const createNeuron = (newId, x,
     {
         data: {
             id: newId + '-rules',
-            parent: newId,
+            parent:newId,
             label: rules
         },
         position: { x: x, y: y },
@@ -36,4 +36,56 @@ export const createNeuron = (newId, x,
         },
         position: { x: x, y: y + 90 },
         classes: 'snapse-node__time'
-    }]
+    }];
+
+export const checkValidRule = (rule) =>{
+    var pattern = /(a+)\/(a+)->(a+);([0-9]+)/;
+    var result = pattern.exec(rule);
+    console.log(result);
+    return result;
+}
+
+export const createEdge = (src,dst) =>{
+    return {
+        data: {
+          id: src + '-' + dst,
+          source: src,
+          target: dst
+        }
+      }
+}
+
+export const allRulesValid = (rules) => {
+    var splitRules = rules.split(" ");
+    var count = 0;
+    for (var i=0;i<splitRules.length;i++){
+        if(checkValidRule(splitRules[i])!=null){
+        count+=1;
+        }
+    }
+    if(count == splitRules.length){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+export const convertElements = elements =>{
+    var array = {
+        nodes: [],
+        edges:[],
+    }
+    for (var k in elements) {
+        var element = elements[k];
+        var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, 0);
+        array.nodes.push(newNodes[0])
+        array.nodes.push(newNodes[1])
+        array.nodes.push(newNodes[2])
+        array.nodes.push(newNodes[3])
+        for (var i=0; i< element.out.length; i++){
+            var newEdges = createEdge(element.id, element.out[i]);
+            array.edges.push(newEdges);
+        }
+    }
+    return array;
+}
