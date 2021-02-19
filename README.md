@@ -1,3 +1,6 @@
+# TO DO
+- Accept non-determinism when choosing rules in automata.js
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

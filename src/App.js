@@ -4,12 +4,15 @@ import { useState, useReducer, useEffect, useRef } from "react";
 import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
 import Snapse from "./components/Snapse/Snapse";
 import shortid from "shortid";
+import { initialize,step } from "./utils/automata";
 import { createNeuron, convertElements, allRulesValid } from "./utils/helpers";
 const originalNeurons = {
   n1: {
     id: "n1",
     position: {x: 50, y:50},
     rules: 'a+/a->a;2',
+    startingSpikes: 3,
+    delay:0,
     spikes: 3,
     isOutput:false,
     out: ['n2']
@@ -17,7 +20,9 @@ const originalNeurons = {
   n2: {
     id: "n2",
     position: {x: 200, y:50},
-    rules: 'a/a->a;1',
+    rules: 'aa/a->a;1',
+    startingSpikes: 0,
+    delay:0,
     spikes: 0,
     isOutput:false,
     out: ['n3']
@@ -26,6 +31,8 @@ const originalNeurons = {
     id: "n3",
     position: {x: 400, y:50},
     rules: 'a/a->a;0',
+    startingSpikes: 0,
+    delay:0,
     spikes: 0,
     isOutput:false,
     out:["n4"]
@@ -76,6 +83,8 @@ const formReducer = (state, event) => {
 
 function App() {
   const [elements, setElements] = useState(convertElements(originalNeurons));
+  const [neuronsState, setNeuronsState] = useState(() => initialize(originalNeurons))
+  const [neurons, setNeurons] = useState(originalNeurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {});
   const [submitting, setSubmitting] = useState(false);
@@ -103,6 +112,7 @@ function App() {
         target: dst
       }
     })
+    originalNeurons[src].out.push(dst);
   }
   async function handleNewNode(event) {
     event.preventDefault();
@@ -128,6 +138,14 @@ function App() {
       newElements.nodes.push(newNodes[2])
       newElements.nodes.push(newNodes[3])
       setElements(newElements);
+      originalNeurons[newId] = {
+        id: newId,
+        position: {x: 100, y:100},
+        rules: formData.rules,
+        spikes: formData.startingSpikes,
+        isOutput:false,
+        out:[]
+      }
     } else {
       console.log("One or more of the rules is invalid");
       showError("One or more of the rules is invalid");
@@ -142,13 +160,16 @@ function App() {
   const handleShow = () => setShowNewNodeModal(true);
   const onForward = (n) => {
     console.log("Forward step");
-    //setElements(elements => step(n, elements))
+    setNeuronsState(neuronsState => step(n, neuronsState));
+    console.log(neurons);
+    console.log(neuronsState);
+
   }
   const neuronsRef = useRef(originalNeurons)
   neuronsRef.current = originalNeurons
   const onIntervalStepRef = useRef(onForward)
   onIntervalStepRef.current = () => {
-    onForward(elements)
+    onForward(originalNeurons)
     //setPBar(p => p + 1)
   }
   useEffect(() => {
@@ -167,8 +188,8 @@ function App() {
         <h1>WebSnapse</h1>
         <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
         <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>{' '}
-        <Button>Save</Button>{' '}
-        <Button>Load</Button>{' '}
+        <Button>Back</Button>{' '}
+        <Button onClick={()=>{onForward(originalNeurons)}}>Next</Button>{' '}
       </div>
       <hr />
       <Snapse
