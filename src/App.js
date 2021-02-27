@@ -1,11 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { useState, useReducer, useEffect, useRef } from "react";
+import { useImmer } from "use-immer";
 import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
 import Snapse from "./components/Snapse/Snapse";
 import shortid from "shortid";
 import { initialize,step } from "./utils/automata";
-import { createNeuron, convertElements, allRulesValid } from "./utils/helpers";
+import { convertElements, allRulesValid } from "./utils/helpers";
 import produce from "immer";
 const originalNeurons = {
   n1: {
@@ -32,9 +33,9 @@ const originalNeurons = {
     id: "n3",
     position: {x: 400, y:50},
     rules: 'a/a->a;0',
-    startingSpikes: 0,
+    startingSpikes: 1,
     delay:0,
-    spikes: 0,
+    spikes: 1,
     isOutput:false,
     out:["n4"]
   },
@@ -85,8 +86,7 @@ const formReducer = (state, event) => {
 
 function App() {
   const [elements, setElements] = useState(convertElements(originalNeurons));
-  const [neurons,setNeurons] = useState(originalNeurons);
-  const [neuronsState, setNeuronsState] = useState(() => initialize(originalNeurons))
+  const [neurons,setNeurons] = useImmer(originalNeurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {});
   const [submitting, setSubmitting] = useState(false);
@@ -104,9 +104,36 @@ function App() {
       value: event.target.value,
     });
   };
+  const handleSave = () => {
+    //window.localStorage.setItem('neurons', JSON.stringify(neurons))
+    //Convert JSON Array to string.
+    var json = JSON.stringify(neurons);
+ 
+    //Convert JSON string to BLOB.
+    json = [json];
+    var blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
+
+    //Check the Browser.
+    var isIE = false || !!document.documentMode;
+    if (isIE) {
+        window.navigator.msSaveBlob(blob1, Date().toString() + "-Neurons.txt");
+    } else {
+        var url = window.URL || window.webkitURL;
+        var link = url.createObjectURL(blob1);
+        var a = document.createElement("a");
+        a.download = Date().toString() + "-Neurons.txt";
+        a.href = link;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+  }
   const onEdgeCreate = (src, dst) => {
     console.log("newEdge", src, dst);
-    let newElements = JSON.parse(JSON.stringify(elements));
+    setNeurons(draft=>{
+      draft[src].out.push(dst);
+    })
+    /* let newElements = JSON.parse(JSON.stringify(elements));
     newElements.edges.push({
       data: {
         id: src + '-' + dst,
@@ -114,15 +141,19 @@ function App() {
         target: dst
       }
     })
-    originalNeurons[src].out.push(dst);
+    originalNeurons[src].out.push(dst); */
   }
   const handleNewPosition = async (position, id) =>{
-    const newPosition = await produce(neurons, draft => {
+    console.log(neurons);
+    setNeurons(draft=>{
       draft[id].position = position;
     })
-    setNeurons(newPosition);
+    /* await produce(neurons, draft => {
+      draft[id].position = position;
+    }) */
+ 
   }
-  async function handleNewNode(event) {
+  function handleNewNode(event) {
     event.preventDefault();
     let newId = shortid.generate();
 
@@ -137,23 +168,17 @@ function App() {
           reset: true
         })
       }, 3000);
-
-      let newNodes = await createNeuron(newId, 100, 100, formData.rules, formData.startingSpikes, 0);
-      let newElements = JSON.parse(JSON.stringify(elements));
-
-      newElements.nodes.push(newNodes[0])
-      newElements.nodes.push(newNodes[1])
-      newElements.nodes.push(newNodes[2])
-      newElements.nodes.push(newNodes[3])
-      setElements(newElements);
-      originalNeurons[newId] = {
-        id: newId,
+      const newNeuron = { id: newId,
         position: {x: 100, y:100},
         rules: formData.rules,
+        startingSpikes: formData.startingSpikes,
+        delay: 0,
         spikes: formData.startingSpikes,
         isOutput:false,
-        out:[]
-      }
+        out:[]}
+      setNeurons(draft=>{
+        draft[newId] = newNeuron;
+      })
     } else {
       console.log("One or more of the rules is invalid");
       showError("One or more of the rules is invalid");
@@ -167,7 +192,7 @@ function App() {
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
   const onForward = async () => {
-    console.log("step forward");
+    console.log(neurons);
     await setNeurons(neurons => step(neurons));
   }
   const neuronsRef = useRef(neurons)
@@ -195,12 +220,14 @@ function App() {
         <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>{' '}
         <Button>Back</Button>{' '}
         <Button onClick={() => onForward()}>Next</Button>{' '}
+        <Button variant="primary" onClick={handleSave}>Save</Button>{' '}
       </div>
       <hr />
       <Snapse
         neurons={neurons}
-        onEdgeCreate={(src, dst) => {
+        onEdgeCreate={(src, dst, addedEles) => {
           onEdgeCreate(src.id(), dst.id())
+          addedEles.remove();
         }}
         handleChangePosition={handleNewPosition} />
       <Modal show={showNewNodeModal} onHide={handleClose}>

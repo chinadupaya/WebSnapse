@@ -13,14 +13,16 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
     const cy = cyRef.current
     if(cy){
       cy.on('mouseup','.snapse-node, .snapse-output',(evt)=>{
+        console.log("change position", evt.target.id())
         handleChangePosition(evt.position, evt.target.id());
       })
       cy.edgehandles({
-        handleNodes: '.snapse-node',
+        handleNodes: '.snapse-node, .snapse-output',
         preview: false,
-        loopAllowed: () => true,
+        loopAllowed: () => false,
         edgeType: function (sourceNode, targetNode) {
-          return sourceNode.edgesTo(targetNode).empty() ? 'flat' : undefined
+          return 'flat'
+          //return sourceNode.edgesTo(targetNode).empty() ? 'flat' : undefined
         },
         complete: onEdgeCreate
       })
