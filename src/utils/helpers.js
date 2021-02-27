@@ -93,6 +93,7 @@ export const convertElements = elements =>{
     }
     for (var k in elements) {
         var element = elements[k];
+        //console.log(element);
         if(!element.isOutput){
             var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, element.delay);
             array.nodes.push(newNodes[0])
@@ -101,7 +102,7 @@ export const convertElements = elements =>{
             array.nodes.push(newNodes[3])
             
         }else{
-            var newOutputNode = createOutputNeuron(element.id, element.position.x,element.position.y, element.id, '', 0);
+            var newOutputNode = createOutputNeuron(element.id, element.position.x,element.position.y, element.id, element.bitstring, 0);
             array.nodes.push(newOutputNode[0])
             array.nodes.push(newOutputNode[1])
             array.nodes.push(newOutputNode[2])

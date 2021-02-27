@@ -9,21 +9,11 @@ import { convertElements } from '../../utils/helpers';
 const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
   const [cyRef, setCy] = useAnimateEdges()
   const elements = convertElements(neurons);
-  /*  useMemo(()=>
-    convertElements(neurons), []) */
   useEffect(()=>{
     const cy = cyRef.current
     if(cy){
       cy.on('mouseup','.snapse-node, .snapse-output',(evt)=>{
         handleChangePosition(evt.position, evt.target.id());
-
-        /* setTimeout(() => {
-         s etSubmitting(false);
-          setFormData({
-            reset: true
-          })
-        }, 500) */
-        //handleNewPosition
       })
       cy.edgehandles({
         handleNodes: '.snapse-node',

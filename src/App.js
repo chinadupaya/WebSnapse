@@ -12,16 +12,16 @@ const originalNeurons = {
     id: "n1",
     position: {x: 50, y:50},
     rules: 'a+/a->a;2',
-    startingSpikes: 3,
+    startingSpikes: 1,
     delay:0,
-    spikes: 3,
+    spikes: 1,
     isOutput:false,
     out: ['n2']
   },
   n2: {
     id: "n2",
     position: {x: 200, y:50},
-    rules: 'aa/a->a;1',
+    rules: 'a/a->a;1',
     startingSpikes: 0,
     delay:0,
     spikes: 0,
@@ -42,7 +42,8 @@ const originalNeurons = {
     id: "n4",
     position: {x: 400, y:200},
     isOutput:true,
-    spikes: 0
+    spikes: 0,
+    bitstring:' '
   }  
 }
 /* const originalElements = {
@@ -116,7 +117,6 @@ function App() {
     originalNeurons[src].out.push(dst);
   }
   const handleNewPosition = async (position, id) =>{
-    console.log(position, id);
     const newPosition = await produce(neurons, draft => {
       draft[id].position = position;
     })
@@ -166,18 +166,15 @@ function App() {
   }
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
-  const onForward = async (neurons) => {
-    console.log("Forward step");
+  const onForward = async () => {
+    console.log("step forward");
     await setNeurons(neurons => step(neurons));
-    //console.log(neurons);
-    //console.log(neuronsState);
-
   }
-  const neuronsRef = useRef(originalNeurons)
-  neuronsRef.current = originalNeurons
+  const neuronsRef = useRef(neurons)
+  neuronsRef.current = neurons
   const onIntervalStepRef = useRef(onForward)
   onIntervalStepRef.current = () => {
-    onForward(originalNeurons)
+    onForward(neurons);
     //setPBar(p => p + 1)
   }
   useEffect(() => {
@@ -197,7 +194,7 @@ function App() {
         <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
         <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>{' '}
         <Button>Back</Button>{' '}
-        <Button onClick={()=>{onForward(originalNeurons)}}>Next</Button>{' '}
+        <Button onClick={() => onForward()}>Next</Button>{' '}
       </div>
       <hr />
       <Snapse
