@@ -61,8 +61,7 @@ const newStates = produce((neurons, draft) =>{
                 //send spikes
                 const neuronOutKeys = neuron.out;
                 for (let k of neuronOutKeys) {
-                spikeAdds[k] =
-                    k in spikeAdds ? spikeAdds[k] + produces : produces
+                    spikeAdds[k] = k in spikeAdds ? spikeAdds[k] + produces : produces
                 }
                 //resolve rule
                 delete draft[neuron.id].currentRule;
@@ -77,6 +76,7 @@ const newStates = produce((neurons, draft) =>{
         }
         
     }
+    console.log("spikeAdds",spikeAdds);
     for (const k in spikeAdds) {
         //states[k].spikes -= spikeAdds[k]
         let newSpikes = draft[k].spikes.valueOf();

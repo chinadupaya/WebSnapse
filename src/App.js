@@ -128,32 +128,22 @@ function App() {
         document.body.removeChild(a);
     }
   }
-  const onEdgeCreate = (src, dst) => {
+  const onEdgeCreate = async (src, dst) => {
     console.log("newEdge", src, dst);
-    setNeurons(draft=>{
-      draft[src].out.push(dst);
+    await setNeurons(draft=>{
+      var outCopy = [...draft[src].out];
+      outCopy.push(dst)
+      draft[src].out = outCopy;
     })
-    /* let newElements = JSON.parse(JSON.stringify(elements));
-    newElements.edges.push({
-      data: {
-        id: src + '-' + dst,
-        source: src,
-        target: dst
-      }
-    })
-    originalNeurons[src].out.push(dst); */
+    
   }
   const handleNewPosition = async (position, id) =>{
-    console.log(neurons);
     setNeurons(draft=>{
       draft[id].position = position;
     })
-    /* await produce(neurons, draft => {
-      draft[id].position = position;
-    }) */
  
   }
-  function handleNewNode(event) {
+  async function handleNewNode(event) {
     event.preventDefault();
     let newId = shortid.generate();
 
@@ -168,15 +158,16 @@ function App() {
           reset: true
         })
       }, 3000);
-      const newNeuron = { id: newId,
+      const newNeuron = { 
+        id: newId,
         position: {x: 100, y:100},
         rules: formData.rules,
-        startingSpikes: formData.startingSpikes,
+        startingSpikes: parseInt(formData.startingSpikes),
         delay: 0,
-        spikes: formData.startingSpikes,
+        spikes: parseInt(formData.startingSpikes),
         isOutput:false,
         out:[]}
-      setNeurons(draft=>{
+      await setNeurons(draft=>{
         draft[newId] = newNeuron;
       })
     } else {
