@@ -5,7 +5,7 @@ import { useImmer } from "use-immer";
 import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
 import Snapse from "./components/Snapse/Snapse";
 import shortid from "shortid";
-import { initialize,step } from "./utils/automata";
+import { step } from "./utils/automata";
 import { convertElements, allRulesValid } from "./utils/helpers";
 import produce from "immer";
 const originalNeurons = {
@@ -85,7 +85,6 @@ const formReducer = (state, event) => {
 }
 
 function App() {
-  const [elements, setElements] = useState(convertElements(originalNeurons));
   const [neurons,setNeurons] = useImmer(originalNeurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {});
@@ -183,7 +182,6 @@ function App() {
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
   const onForward = async () => {
-    console.log(neurons);
     await setNeurons(neurons => step(neurons));
   }
   const neuronsRef = useRef(neurons)
