@@ -51,7 +51,7 @@ const newStates = produce((neurons, draft) =>{
                 newDelay--;
                 draft[neuron.id].delay = newDelay;
             }
-            if(neuron.delay == 0){
+            else if(neuron.delay == 0){
                 //consume spikes
                 console.log("Firing!!");
                 var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);

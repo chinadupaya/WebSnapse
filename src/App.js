@@ -8,7 +8,7 @@ import shortid from "shortid";
 import { step } from "./utils/automata";
 import { convertElements, allRulesValid } from "./utils/helpers";
 import produce from "immer";
-const originalNeurons = {
+var originalNeurons = {
   n1: {
     id: "n1",
     position: {x: 50, y:50},
@@ -47,30 +47,6 @@ const originalNeurons = {
     bitstring:' '
   }  
 }
-/* const originalElements = {
-  nodes: [
-    { data: { id: 'n1', label: 'n1' }, position: { x: 50, y: 50 }, classes: 'snapse-node' },
-    { data: { id: 'n1-rules', parent: 'n1', label: 'a+/a->a;2' }, position: { x: 50, y: 50 }, classes: 'snapse-node__rules' },
-    { data: { id: 'n1-spike', parent: 'n1', label: 0 }, position: { x: 50, y: 50 + 60 }, classes: 'snapse-node__spike' },
-    { data: { id: 'n1-time', parent: 'n1', label: 0 }, position: { x: 50, y: 50 + 90 }, classes: 'snapse-node__time' },
-    { data: { id: 'n2', label: 'n2' }, position: { x: 200, y: 50 }, classes: 'snapse-node' },
-    { data: { id: 'n2-rules', parent: 'n2', label: 'a/a->a;1' }, position: { x: 200, y: 50 }, classes: 'snapse-node__rules' },
-    { data: { id: 'n2-spike', parent: 'n2', label: 0 }, position: { x: 200, y: 50 + 60 }, classes: 'snapse-node__spike' },
-    { data: { id: 'n2-time', parent: 'n2', label: 0 }, position: { x: 200, y: 50 + 90 }, classes: 'snapse-node__time' },
-    { data: { id: 'n3', label: 'n3' }, position: { x: 400, y: 50 }, classes: 'snapse-node' },
-    { data: { id: 'n3-rules', parent: 'n3', label: 'a/a->a;0' }, position: { x: 400, y: 50 }, classes: 'snapse-node__rules' },
-    { data: { id: 'n3-spike', parent: 'n3', label: 0 }, position: { x: 400, y: 50 + 60 }, classes: 'snapse-node__spike' },
-    { data: { id: 'n3-time', parent: 'n3', label: 0 }, position: { x: 400, y: 50 + 90 }, classes: 'snapse-node__time' },
-  ],
-  edges: [
-    {
-      data: { id: 'n1-n2', source: 'n1', target: 'n2' }
-    },
-    {
-      data: { id: 'n2-n3', source: 'n2', target: 'n3' }
-    }
-  ]
-} */
 const formReducer = (state, event) => {
   if (event.reset) {
     return {
@@ -86,6 +62,7 @@ const formReducer = (state, event) => {
 
 function App() {
   const [neurons,setNeurons] = useImmer(originalNeurons);
+  const [time, setTime] = useState(-1);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [formData, setFormData] = useReducer(formReducer, {});
   const [submitting, setSubmitting] = useState(false);
@@ -104,7 +81,6 @@ function App() {
     });
   };
   const handleSave = () => {
-    //window.localStorage.setItem('neurons', JSON.stringify(neurons))
     //Convert JSON Array to string.
     var json = JSON.stringify(neurons);
  
@@ -134,6 +110,7 @@ function App() {
       outCopy.push(dst)
       draft[src].out = outCopy;
     })
+    
     
   }
   const handleNewPosition = async (position, id) =>{
@@ -181,8 +158,18 @@ function App() {
   }
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
+  const handleReset = ()=>{
+    setNeurons(draft=>draft=originalNeurons);
+    setTime(-1);
+  }
   const onForward = async () => {
+    if(time==-1){
+      //copy
+      originalNeurons = JSON.parse(JSON.stringify(neurons));
+    }
     await setNeurons(neurons => step(neurons));
+    setTime(time=>time+1);
+    
   }
   const neuronsRef = useRef(neurons)
   neuronsRef.current = neurons
@@ -205,11 +192,21 @@ function App() {
       </Alert>}
       <div style={{ textAlign: "center" }}>
         <h1>WebSnapse</h1>
-        <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
+        
         <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>{' '}
         <Button>Back</Button>{' '}
         <Button onClick={() => onForward()}>Next</Button>{' '}
         <Button variant="primary" onClick={handleSave}>Save</Button>{' '}
+        <Button variant="danger" onClick={handleReset}>Reset</Button>
+      </div>
+      <div style={{textAlign:"center", paddingTop:"1em"}}>
+        <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
+        <Button variant="info">Edit Node</Button>{' '}
+        <Button variant="danger">Delete Node</Button>{' '}
+
+      </div>
+      <div>
+        Time: {time == -1 ? "Start playing!" : time }
       </div>
       <hr />
       <Snapse
