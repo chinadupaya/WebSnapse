@@ -4,10 +4,9 @@ import { useState, useReducer, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
 import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
 import Snapse from "./components/Snapse/Snapse";
-import shortid from "shortid";
 import { step } from "./utils/automata";
-import NewNode from './forms/NewNodeForm';
-import { convertElements, allRulesValid } from "./utils/helpers";
+import NewNodeForm from './forms/NewNodeForm';
+import EditNodeForm from './forms/EditNodeForm';
 import produce from "immer";
 var originalNeurons = {
   n1: {
@@ -65,8 +64,7 @@ function App() {
   const [neurons,setNeurons] = useImmer(originalNeurons);
   const [time, setTime] = useState(-1);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
-  const [formData, setFormData] = useReducer(formReducer, {});
-  const [submitting, setSubmitting] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState("");
   const showError = (text) => {
@@ -119,11 +117,21 @@ function App() {
       draft[newNeuron.id] = newNeuron;
     })
   }
+  async function handleEditNode(id,rules, spikes) {
+    console.log("handleEditNode")
+    await setNeurons(draft=>{
+      draft[id].startingSpikes = spikes;
+      draft[id].spikes = spikes;
+      draft[id].rules = rules;
+    })
+  }
   function handlePlay() {
     setIsPlaying(p => !p);
   }
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
+  const handleCloseEditModal = () => setShowEditModal(false);
+  const handleShowEditModal = () => setShowEditModal(true);
   const handleReset = ()=>{
     setNeurons(draft=>draft=originalNeurons);
     setTime(-1);
@@ -135,7 +143,6 @@ function App() {
     }
     await setNeurons(neurons => step(neurons));
     setTime(time=>time+1);
-    
   }
   const neuronsRef = useRef(neurons)
   neuronsRef.current = neurons
@@ -167,7 +174,7 @@ function App() {
       </div>
       <div style={{textAlign:"center", paddingTop:"1em"}}>
         <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
-        <Button variant="info">Edit Node</Button>{' '}
+        <Button variant="info" onClick={handleShowEditModal}>Edit Node</Button>{' '}
         <Button variant="danger">Delete Node</Button>{' '}
 
       </div>
@@ -182,10 +189,16 @@ function App() {
           addedEles.remove();
         }}
         handleChangePosition={handleNewPosition} />
-      <NewNode showNewNodeModal={showNewNodeModal}
+      <NewNodeForm showNewNodeModal={showNewNodeModal}
        handleCloseModal={handleClose} 
        handleNewNode={handleNewNode}
        handleError={showError} />
+      <EditNodeForm showEditModal={showEditModal}
+      handleCloseEditModal={handleCloseEditModal}
+      handleEditNode = {handleEditNode}
+      handleError={showError}
+      neurons={neurons} />
+
     </Container>
   );
 }

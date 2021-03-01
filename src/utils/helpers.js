@@ -14,7 +14,7 @@ export const createNeuron = (newId, x,
         data: {
             id: newId + '-rules',
             parent:newId,
-            label: rules
+            label: rules.replace(/ /g, "\n")
         },
         position: { x: x, y: y },
         classes: 'snapse-node__rules'
@@ -55,8 +55,10 @@ export const createOutputNeuron = (id,x,y,label,output,spike) => [
       }
 ]
 export const checkValidRule = (rule) =>{
+    console.log(rule);
+    const re = /(a+)(\+*\**)\/(a+)->(a+);([0-9]+)/
     var pattern = /(a+)\/(a+)->(a+);([0-9]+)/;
-    var result = pattern.exec(rule);
+    var result = re.exec(rule);
     console.log(result);
     return result;
 }
@@ -76,7 +78,9 @@ export const allRulesValid = (rules) => {
     var count = 0;
     for (var i=0;i<splitRules.length;i++){
         if(checkValidRule(splitRules[i])!=null){
-        count+=1;
+            count+=1;
+        }else{
+            console.log("invalidRule", splitRules[i])
         }
     }
     if(count == splitRules.length){

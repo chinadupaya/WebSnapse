@@ -20,6 +20,7 @@ const styles = [
             'text-wrap': 'wrap',
             'text-halign': 'center',
             'text-valign': 'center',
+            'text-wrap':'wrap',
             content: 'data(label)',
             height: 150,
             shape: 'roundrectangle',
