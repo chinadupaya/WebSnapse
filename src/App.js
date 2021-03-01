@@ -6,6 +6,7 @@ import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
 import Snapse from "./components/Snapse/Snapse";
 import shortid from "shortid";
 import { step } from "./utils/automata";
+import NewNode from './forms/NewNodeForm';
 import { convertElements, allRulesValid } from "./utils/helpers";
 import produce from "immer";
 var originalNeurons = {
@@ -74,12 +75,6 @@ function App() {
       setError("");
     }, 3000);
   }
-  const handleChange = event => {
-    setFormData({
-      name: event.target.name,
-      value: event.target.value,
-    });
-  };
   const handleSave = () => {
     //Convert JSON Array to string.
     var json = JSON.stringify(neurons);
@@ -119,39 +114,10 @@ function App() {
     })
  
   }
-  async function handleNewNode(event) {
-    event.preventDefault();
-    let newId = shortid.generate();
-
-    if (allRulesValid(formData.rules)) {
-      console.log("All rules valid");
-      handleClose();
-      setSubmitting(true);
-
-      setTimeout(() => {
-        setSubmitting(false);
-        setFormData({
-          reset: true
-        })
-      }, 3000);
-      const newNeuron = { 
-        id: newId,
-        position: {x: 100, y:100},
-        rules: formData.rules,
-        startingSpikes: parseInt(formData.startingSpikes),
-        delay: 0,
-        spikes: parseInt(formData.startingSpikes),
-        isOutput:false,
-        out:[]}
-      await setNeurons(draft=>{
-        draft[newId] = newNeuron;
-      })
-    } else {
-      console.log("One or more of the rules is invalid");
-      showError("One or more of the rules is invalid");
-      handleClose();
-    };
-
+  async function handleNewNode(newNeuron) {
+    await setNeurons(draft=>{
+      draft[newNeuron.id] = newNeuron;
+    })
   }
   function handlePlay() {
     setIsPlaying(p => !p);
@@ -216,32 +182,10 @@ function App() {
           addedEles.remove();
         }}
         handleChangePosition={handleNewPosition} />
-      <Modal show={showNewNodeModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Create New Node</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleNewNode}>
-            <Form.Group>
-              <Form.Label>Node Rules</Form.Label>
-              <Form.Control required name="rules" type="text" placeholder="a/a->a;0 aa/a->a;1" value={formData.rules} onChange={handleChange} />
-              <Form.Text className="text-muted">
-                Enter valid rules only. Separate each rule with a space.
-              </Form.Text>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Starting Spike Number</Form.Label>
-              <Form.Control required name="startingSpikes" type="number" placeholder="0" value={formData.startingSpikes} onChange={handleChange} />
-            </Form.Group>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button> {' '}
-            <Button type="submit" variant="primary">
-              Save Changes
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+      <NewNode showNewNodeModal={showNewNodeModal}
+       handleCloseModal={handleClose} 
+       handleNewNode={handleNewNode}
+       handleError={showError} />
     </Container>
   );
 }
