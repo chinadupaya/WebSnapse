@@ -1,6 +1,6 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useReducer, useState } from 'react';
-import { allRulesValid } from "../utils/helpers";
+import { allRulesValid } from "../../utils/helpers";
 import shortid from "shortid";
 const formReducer = (state, event) => {
   if (event.reset) {
