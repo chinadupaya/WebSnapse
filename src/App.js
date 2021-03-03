@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Container, Alert } from 'react-bootstrap';
+import { Button, Container, Alert, Row, Col, Form } from 'react-bootstrap';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import { step } from "./utils/automata";
@@ -64,6 +64,7 @@ const formReducer = (state, event) => {
 function App() {
   const [neurons, setNeurons] = useImmer(originalNeurons);
   const [time, setTime] = useState(-1);
+  const [fileName, setFileName] = useState('');
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -99,6 +100,24 @@ function App() {
       document.body.removeChild(a);
     }
   }
+  const handleLoad = (input) => {
+    console.log(input);
+    let file = input.files[0];
+    console.log(file);
+    if (file.type && file.type.indexOf('text/plain') === -1) {
+      
+      showError("File is not a text file");
+      return;
+    } 
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      console.log(JSON.parse(event.target.result));
+      setNeurons(draft=> draft = JSON.parse(event.target.result));
+      setFileName(file.name);
+    });
+    reader.readAsText(file);
+  }
+
   const onEdgeCreate = async (src, dst) => {
     console.log("newEdge", src, dst);
     await setNeurons(draft => {
@@ -137,7 +156,7 @@ function App() {
 
         if (!neuron.isOutput) {
           const neuronOutKeys = neuron.out;
-          let arr = neuron.out.filter(function(item) {
+          let arr = neuron.out.filter(function (item) {
             return item !== neuronId
           });
           draft[k].out = arr;
@@ -182,7 +201,7 @@ function App() {
         onIntervalStepRef.current()
       }, 3000)
     }
-    return () =>clearInterval(interval);
+    return () => clearInterval(interval);
   }, [isPlaying, onIntervalStepRef])
   return (
     <Container>
@@ -191,14 +210,34 @@ function App() {
       </Alert>}
       <div style={{ textAlign: "center" }}>
         <h1>WebSnapse</h1>
-        <Button>Back</Button>{' '}
-        <div style={{display: 'inline-block'}}>
-          <ProgressBar key={pBar} isPlaying={isPlaying} />
-          <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
-        </div> {' '}
-        <Button onClick={() => onForward()}>Next</Button>{' '}
-        <Button variant="primary" onClick={handleSave}>Save</Button>{' '}
-        <Button variant="danger" onClick={handleReset}>Reset</Button>
+        <Row>
+          <Col>
+            <Button>Back</Button>{' '}
+            <div style={{ display: 'inline-block' }}>
+              <ProgressBar key={pBar} isPlaying={isPlaying} />
+              <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
+            </div> {' '}
+            <Button onClick={() => onForward()}>Next</Button>{' '}
+            <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
+          </Col>
+          <Col>
+            <Row>
+              <Col style={{ textAlign: "right" }}><Button variant="primary" onClick={handleSave}>Save</Button>{' '}</Col>
+              <Col>
+                <Form>
+                  <Form.File
+                    id="custom-file"
+                    label={fileName ? fileName : "Load file..."}
+                    custom
+                    onChange={(e)=>{handleLoad(e.target)}}
+                  />
+                </Form>
+
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
         <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
@@ -250,7 +289,7 @@ const ProgressBar = styled.div`
   ${props =>
     props.isPlaying &&
     css`
-      animation: ${shortening} 1s linear; 
+      animation: ${shortening} 3s linear; 
     `}
   background-color: red;
   height: 4px;

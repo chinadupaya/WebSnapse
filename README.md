@@ -1,7 +1,7 @@
 # TO DO
 - Accept non-determinism when choosing rules in automata.js
 - accept exponents in rules
-- Play and Pause
+
 - Back step
 - convert JSON to XML
 
@@ -9,9 +9,10 @@
 
 # MAYBE
 - show which rule has been selected
-
+- adjust time interval
 
 # Done
+- Play and Pause
 - Add Neurons
 - Add Edges
 
