@@ -1,16 +1,25 @@
 # TO DO
 - Accept non-determinism when choosing rules in automata.js
-- Use immer to setState onCreateNode/Edge/OutputNode
+- accept exponents in rules
+- Play and Pause
+- Back step
+- convert JSON to XML
+
+- fix logic
+
+# MAYBE
+- show which rule has been selected
+
+
+# Done
+- Add Neurons
+- Add Edges
 
 - Delete Neurons
 - Delete Edges
 - Edit Neurons
-- Play and Pause
-- Back step
-- convert JSON to XML
-- Restart
-- fix logic
 - add timer
+- Restart
 
 # Getting Started with Create React App
 

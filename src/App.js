@@ -1,14 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { useState, useReducer, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Form, Modal, Container, Alert } from 'react-bootstrap';
+import { Button, Container, Alert } from 'react-bootstrap';
+import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import { step } from "./utils/automata";
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
-import produce from "immer";
 var originalNeurons = {
   n1: {
     id: "n1",
@@ -69,6 +69,7 @@ function App() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState("");
+  const [pBar, setPBar] = useState(0)
   const showError = (text) => {
     setError(text);
     setTimeout(() => {
@@ -91,7 +92,7 @@ function App() {
       var url = window.URL || window.webkitURL;
       var link = url.createObjectURL(blob1);
       var a = document.createElement("a");
-      a.download = Date().toString() + "-Neurons.txt";
+      a.download = new Date().toISOString() + "-Neurons.txt";
       a.href = link;
       document.body.appendChild(a);
       a.click();
@@ -129,9 +130,6 @@ function App() {
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
-    
-
-    
     await setNeurons(draft => {
       //first delete edges connected to neuron
       for (var k in draft) {
@@ -161,6 +159,7 @@ function App() {
   const handleReset = () => {
     setNeurons(draft => draft = originalNeurons);
     setTime(-1);
+    setIsPlaying(false);
   }
   const onForward = async () => {
     if (time == -1) {
@@ -174,16 +173,17 @@ function App() {
   neuronsRef.current = neurons
   const onIntervalStepRef = useRef(onForward)
   onIntervalStepRef.current = () => {
-    onForward(neurons);
-    //setPBar(p => p + 1)
+    onForward();
+    setPBar(p => p + 1);
   }
   useEffect(() => {
     if (isPlaying) {
-      setInterval(() => {
+      var interval = setInterval(() => {
         onIntervalStepRef.current()
       }, 3000)
     }
-  }, [isPlaying])
+    return () =>clearInterval(interval);
+  }, [isPlaying, onIntervalStepRef])
   return (
     <Container>
       {error && <Alert variant="danger">
@@ -191,9 +191,11 @@ function App() {
       </Alert>}
       <div style={{ textAlign: "center" }}>
         <h1>WebSnapse</h1>
-
-        <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>{' '}
         <Button>Back</Button>{' '}
+        <div style={{display: 'inline-block'}}>
+          <ProgressBar key={pBar} isPlaying={isPlaying} />
+          <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
+        </div> {' '}
         <Button onClick={() => onForward()}>Next</Button>{' '}
         <Button variant="primary" onClick={handleSave}>Save</Button>{' '}
         <Button variant="danger" onClick={handleReset}>Reset</Button>
@@ -234,5 +236,27 @@ function App() {
     </Container>
   );
 }
+
+const shortening = keyframes`
+  from {
+    transform: scaleX(100%);
+  }
+
+  to {
+    transform: scaleX(0%);
+  }
+`
+const ProgressBar = styled.div`
+  ${props =>
+    props.isPlaying &&
+    css`
+      animation: ${shortening} 1s linear; 
+    `}
+  background-color: red;
+  height: 4px;
+  transform-origin: left center;
+  margin-bottom: 2px;
+`
+
 
 export default App;
