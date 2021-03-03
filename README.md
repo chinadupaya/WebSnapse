@@ -13,6 +13,8 @@
 
 # Done
 - Play and Pause
+- Load JSON file
+- save JSON file
 - Add Neurons
 - Add Edges
 
