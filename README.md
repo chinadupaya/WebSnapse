@@ -2,7 +2,7 @@
 - accept forgetting rules
 - Accept non-determinism when choosing rules in automata.js
 - accept exponents in rules
-
+- change style if -1 delay
 
 - Back step
 - convert JSON to XML
@@ -22,6 +22,7 @@
 - save JSON file
 - Add Neurons
 - Add Edges
+- Forgetting rules
 
 - Delete Neurons
 - Delete Edges

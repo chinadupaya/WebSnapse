@@ -105,14 +105,14 @@ function App() {
     let file = input.files[0];
     console.log(file);
     if (file.type && file.type.indexOf('text/plain') === -1) {
-      
+
       showError("File is not a text file");
       return;
-    } 
+    }
     const reader = new FileReader();
     reader.addEventListener('load', (event) => {
       console.log(JSON.parse(event.target.result));
-      setNeurons(draft=> draft = JSON.parse(event.target.result));
+      setNeurons(draft => draft = JSON.parse(event.target.result));
       setFileName(file.name);
     });
     reader.readAsText(file);
@@ -213,13 +213,9 @@ function App() {
         <h1>WebSnapse</h1>
         <Row>
           <Col>
-            <Button>Back</Button>{' '}
-            <div style={{ display: 'inline-block' }}>
-              <ProgressBar key={pBar} isPlaying={isPlaying} />
-              <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
-            </div> {' '}
-            <Button onClick={() => onForward()}>Next</Button>{' '}
-            <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
+            <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
+            <Button variant="info" onClick={handleShowEditModal}>Edit Node</Button>{' '}
+            <Button variant="danger" onClick={handleShowDeleteModal}>Delete Node</Button>{' '}
           </Col>
           <Col>
             <Row>
@@ -230,7 +226,7 @@ function App() {
                     id="custom-file"
                     label={fileName ? fileName : "Load file..."}
                     custom
-                    onChange={(e)=>{handleLoad(e.target)}}
+                    onChange={(e) => { handleLoad(e.target) }}
                   />
                 </Form>
 
@@ -241,9 +237,14 @@ function App() {
 
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
-        <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
-        <Button variant="info" onClick={handleShowEditModal}>Edit Node</Button>{' '}
-        <Button variant="danger" onClick={handleShowDeleteModal}>Delete Node</Button>{' '}
+        <Button>Back</Button>{' '}
+        <div style={{ display: 'inline-block' }}>
+          <ProgressBar key={pBar} isPlaying={isPlaying} />
+          <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
+        </div> {' '}
+        <Button onClick={() => onForward()}>Next</Button>{' '}
+        <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
+
 
       </div>
       <div>
