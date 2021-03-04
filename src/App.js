@@ -149,6 +149,7 @@ function App() {
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
+    console.log(neurons);
     await setNeurons(draft => {
       //first delete edges connected to neuron
       for (var k in draft) {

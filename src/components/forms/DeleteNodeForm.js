@@ -16,6 +16,7 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
     }
     function handleSubmit(event) {
         event.preventDefault();
+        console.log(neurons);
         if(neuronId!==''){
             
             handleClose();

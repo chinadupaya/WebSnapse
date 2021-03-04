@@ -1,11 +1,16 @@
 # TO DO
+- accept forgetting rules
 - Accept non-determinism when choosing rules in automata.js
 - accept exponents in rules
+
 
 - Back step
 - convert JSON to XML
 
 - fix logic
+
+# BUGS
+- can't clear the whole screen (must always be at least one neuron)
 
 # MAYBE
 - show which rule has been selected

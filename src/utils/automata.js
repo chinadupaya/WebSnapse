@@ -1,12 +1,16 @@
 import produce from 'immer'
 export function parseRule(rule){
     const re = /(a+)(\+*\**)\/(a+)->(a+);([0-9]+)/
-    
+    const forgetRe=/(a+)(\+*\**)\/(a+)->(0);(0)/
     const res = re.exec(rule)
+    const forgetRes = forgetRe.exec(rule)
     if (res) {
       const [, requires, symbol, consumes, produces, delayStr] = res
       const delay = parseInt(delayStr, 10)
       return[requires.length, symbol, consumes.length, produces.length, delay];
+    }else if(forgetRes){
+        const [, requires,symbol,consumes, produces, delayStr] = forgetRes;
+        return [requires.length, symbol, consumes.length, parseInt(produces, 10), delayStr];
     }
   
     return false
@@ -46,12 +50,8 @@ const newStates = produce((neurons, draft) =>{
             } 
         }
         else if(neuron.currentRule){
-            if(neuron.delay > 0){
-                let newDelay = neuron.delay.valueOf();
-                newDelay--;
-                draft[neuron.id].delay = newDelay;
-            }
-            else if(neuron.delay == 0){
+            
+            if(neuron.delay < 0){
                 //consume spikes
                 console.log("Firing!!");
                 var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
@@ -65,12 +65,12 @@ const newStates = produce((neurons, draft) =>{
                 }
                 //resolve rule
                 delete draft[neuron.id].currentRule;
-                //neuron.spikes
-                /* if(neuron.out && neuron.out.length > 0){
-                    console.log("send spikes!");
-                    //send spikes
-                } */
-            } 
+
+            } else if(neuron.delay >= 0){
+                let newDelay = neuron.delay.valueOf();
+                newDelay--;
+                draft[neuron.id].delay = newDelay;
+            }
         } else if(neuron.isOutput){
             outputTracker.push(neuron.id);
         }
@@ -112,18 +112,22 @@ export function step(neurons){
                     var [requires, symbol, consumes, produces, delay] = parseRule(rules[i]);
                     if(canUseRule(requires,symbol,neuron.spikes)){
                         //TO DO accept non-determinism
+                        console.log(rules[i], neuron.id);
                         draft[neuron.id].currentRule = rules[i];
                         draft[neuron.id].delay = delay;
+                        break;
                     }
                 } 
             }
-            else if(neuron.currentRule){
-                if(neuron.delay > 0){
+            //work on the rule
+            if(neuron.currentRule){
+                if(neuron.delay >= 0){
                     let newDelay = neuron.delay.valueOf();
                     newDelay--;
                     draft[neuron.id].delay = newDelay;
                 }
-                if(neuron.delay == 0){
+                if(neuron.delay < 0){
+                    
                     //consume spikes
                     var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
                     let newSpikes = neuron.spikes.valueOf();
@@ -131,20 +135,19 @@ export function step(neurons){
                     draft[neuron.id].spikes = newSpikes;
                     //send spikes
                     const neuronOutKeys = neuron.out;
+                    console.log("produces",produces, neuron.currentRule);
                     for (let k of neuronOutKeys) {
                     spikeAdds[k] =
                         k in spikeAdds ? spikeAdds[k] + produces : produces
                     }
                     //resolve rule
                     delete draft[neuron.id].currentRule;
-                    //neuron.spikes
-                    /* if(neuron.out && neuron.out.length > 0){
-                        console.log("send spikes!");
-                        //send spikes
-                    } */
                 } 
             } else if(neuron.isOutput){
                 outputTracker.push(neuron.id);
+                if (!(k in spikeAdds)) {
+                    spikeAdds[k] = 0
+                  }
             }
             
         }
@@ -154,19 +157,11 @@ export function step(neurons){
             newSpikes+=spikeAdds[k];
             draft[k].spikes = newSpikes;
             if(draft[k].isOutput){
-                var newString = `${draft[k].bitstring}${'1'}`
+                var newString = `${draft[k].bitstring}${(spikeAdds[k] || '0')}`
                 draft[k].bitstring=newString;
             }
         }
-        console.log(outputTracker);
-        //if nothing was passed to an output node, append '0'
-        for (var k=0;k<outputTracker.length; k++){
-            if(!spikeAdds[outputTracker[k]]){
-                //var string_copy = (' ' + original_string).slice(1);
-                var newString = `${draft[outputTracker[k]].bitstring}${'0'}`
-                draft[outputTracker[k]].bitstring=newString;
-            }
-        }
+
     })
 
     return newStates;
