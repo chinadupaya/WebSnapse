@@ -5,6 +5,7 @@ import { useImmer } from "use-immer";
 import { Button, Container, Alert, Row, Col, Form } from 'react-bootstrap';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
+import shortid from 'shortid';
 import { step } from "./utils/automata";
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
@@ -63,7 +64,7 @@ const formReducer = (state, event) => {
 
 function App() {
   const [neurons, setNeurons] = useImmer(originalNeurons);
-  const [time, setTime] = useState(-1);
+  const [time, setTime] = useState(0);
   const [fileName, setFileName] = useState('');
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -139,6 +140,18 @@ function App() {
       draft[newNeuron.id] = newNeuron;
     })
   }
+  async function handleNewOutput(){
+    await setNeurons(draft => {
+      var newId=shortid.generate()
+      draft[newId] = {
+        id: newId,
+        position: { x: 300, y: 300 },
+        isOutput: true,
+        spikes: 0,
+        bitstring: ' '
+      }
+    })
+  }
   async function handleEditNode(id, rules, spikes) {
     console.log("handleEditNode")
     await setNeurons(draft => {
@@ -178,11 +191,11 @@ function App() {
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleReset = () => {
     setNeurons(draft => draft = originalNeurons);
-    setTime(-1);
+    setTime(0);
     setIsPlaying(false);
   }
   const onForward = async () => {
-    if (time == -1) {
+    if (time == 0) {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
@@ -214,6 +227,7 @@ function App() {
         <Row>
           <Col>
             <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
+            <Button variant="primary" onClick={handleNewOutput}>New Output Node</Button>{' '}
             <Button variant="info" onClick={handleShowEditModal}>Edit Node</Button>{' '}
             <Button variant="danger" onClick={handleShowDeleteModal}>Delete Node</Button>{' '}
           </Col>
@@ -244,11 +258,9 @@ function App() {
         </div> {' '}
         <Button onClick={() => onForward()}>Next</Button>{' '}
         <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
-
-
       </div>
       <div>
-        Time: {time == -1 ? "Start playing!" : time}
+        Time: {time == 0 ? "Start playing!" : time}
       </div>
       <hr />
       <Snapse
