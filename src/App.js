@@ -6,7 +6,7 @@ import { Button, Container, Alert, Row, Col, Form } from 'react-bootstrap';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
-import { step } from "./utils/automata";
+import { step, backStep } from "./utils/automata";
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
@@ -193,14 +193,27 @@ function App() {
     setNeurons(draft => draft = originalNeurons);
     setTime(0);
     setIsPlaying(false);
+    localStorage.clear();
   }
   const onForward = async () => {
     if (time == 0) {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons));
+    await setNeurons(neurons => step(neurons,time));
     setTime(time => time + 1);
+  }
+  const onBackward = async () =>{
+    if(time > 1){
+      var tempTime = time.valueOf();
+      await setNeurons(neurons=> backStep(tempTime-2));
+      await setTime(time=> time-1);
+      
+    }
+    else if(time==1){
+      handleReset();
+    }
+    
   }
   const neuronsRef = useRef(neurons)
   neuronsRef.current = neurons
@@ -251,7 +264,7 @@ function App() {
 
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
-        <Button>Back</Button>{' '}
+        <Button onClick={onBackward}>Back</Button>{' '}
         <div style={{ display: 'inline-block' }}>
           <ProgressBar key={pBar} isPlaying={isPlaying} />
           <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>

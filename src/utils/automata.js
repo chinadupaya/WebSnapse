@@ -31,74 +31,7 @@ export function canUseRule(requires, symbol, spikes){
     }
     return false;
 }
-const newStates = produce((neurons, draft) =>{
-    const spikeAdds = {}
-    const outputTracker = [];
-    for (var k in draft){
-        var neuron = draft[k];
-        //choose rule to follow if not working on a rule currently
-        if(!neuron.currentRule && !neuron.isOutput){
-            //pick a rule
-            var rules = neuron.rules.split(' ');
-            for (var i=0;i<rules.length;i++){
-                var [requires, symbol, consumes, produces, delay] = parseRule(rules[i]);
-                if(canUseRule(requires,symbol,neuron.spikes)){
-                    //TO DO accept non-determinism
-                    draft[neuron.id].currentRule = rules[i];
-                    draft[neuron.id].delay = delay;
-                }
-            } 
-        }
-        else if(neuron.currentRule){
-            
-            if(neuron.delay < 0){
-                //consume spikes
-                console.log("Firing!!");
-                var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
-                let newSpikes = neuron.spikes.valueOf();
-                newSpikes-=consumes;
-                draft[neuron.id].spikes = newSpikes;
-                //send spikes
-                const neuronOutKeys = neuron.out;
-                for (let k of neuronOutKeys) {
-                    spikeAdds[k] = k in spikeAdds ? spikeAdds[k] + produces : produces
-                }
-                //resolve rule
-                delete draft[neuron.id].currentRule;
-
-            } else if(neuron.delay >= 0){
-                let newDelay = neuron.delay.valueOf();
-                newDelay--;
-                draft[neuron.id].delay = newDelay;
-            }
-        } else if(neuron.isOutput){
-            outputTracker.push(neuron.id);
-        }
-        
-    }
-    console.log("spikeAdds",spikeAdds);
-    for (const k in spikeAdds) {
-        //states[k].spikes -= spikeAdds[k]
-        let newSpikes = draft[k].spikes.valueOf();
-        newSpikes+=spikeAdds[k];
-        draft[k].spikes = newSpikes;
-        if(draft[k].isOutput){
-            var newString = `${draft[k].bitstring}${'1'}`
-            draft[k].bitstring=newString;
-        }
-    }
-    console.log(outputTracker);
-    //if nothing was passed to an output node, append '0'
-    for (var k=0;k<outputTracker.length; k++){
-        if(!spikeAdds[outputTracker[k]]){
-            //var string_copy = (' ' + original_string).slice(1);
-            var newString = `${draft[outputTracker[k]].bitstring}${'0'}`
-            draft[outputTracker[k]].bitstring=newString;
-        }
-    }
-})
-
-export function step(neurons){
+export function step(neurons,time){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];
@@ -163,8 +96,16 @@ export function step(neurons){
         }
 
     })
-
+    localStorage.setItem(time+'sec',JSON.stringify(newStates));
     return newStates;
+    
+}
+
+export function backStep(time){
+    console.log("back step automata");
+    var oldState = JSON.parse(localStorage.getItem(time+'sec'));
+    console.log(time, oldState)
+    return oldState;
     
 }
 export function initialize(neurons) {
