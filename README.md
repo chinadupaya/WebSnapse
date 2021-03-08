@@ -2,11 +2,10 @@
 - Accept non-determinism when choosing rules in automata.js
 - accept exponents in rules
 - change style if -1 delay
+- Choice history
 
-- Back step
 - convert JSON to XML
 
-- fix logic
 
 # BUGS
 - can't clear the whole screen (must always be at least one neuron)
@@ -16,6 +15,7 @@
 - adjust time interval
 
 # Done
+- Back step
 - Play and Pause
 - Load JSON file
 - save JSON file
