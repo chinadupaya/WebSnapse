@@ -53,7 +53,6 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
         isOutput: false,
         out: []
       }
-      console.log(newNeuron);
       handleNewNode(newNeuron);
     } else {
       console.log("One or more of the rules is invalid");

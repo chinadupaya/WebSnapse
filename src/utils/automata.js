@@ -9,10 +9,11 @@ export function parseRule(rule){
       const delay = parseInt(delayStr, 10)
       return[requires.length, symbol, consumes.length, produces.length, delay];
     }else if(forgetRes){
+
         const [, requires,symbol,consumes, produces, delayStr] = forgetRes;
-        return [requires.length, symbol, consumes.length, parseInt(produces, 10), delayStr];
+
+        return [requires.length, symbol, consumes.length, 0, 0];
     }
-  
     return false
 }
 export function canUseRule(requires, symbol, spikes){
@@ -21,17 +22,17 @@ export function canUseRule(requires, symbol, spikes){
             return true
         }
     }
-    if(symbol && symbol == '*'){
+    else if(symbol && symbol == '*'){
         if (spikes >= requires){
             return true
         }
     }
-    if(spikes==requires){
+    else if(spikes==requires){
         return true;
     }
     return false;
 }
-export function step(neurons,time){
+export function step(neurons,time,isRandom){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];
@@ -41,34 +42,43 @@ export function step(neurons,time){
             if(!neuron.currentRule && !neuron.isOutput){
                 //pick a rule
                 var rules = neuron.rules.split(' ');
+                var validRules=[];
                 for (var i=0;i<rules.length;i++){
                     var [requires, symbol, consumes, produces, delay] = parseRule(rules[i]);
                     if(canUseRule(requires,symbol,neuron.spikes)){
-                        //TO DO accept non-determinism
-                        console.log(rules[i], neuron.id);
-                        draft[neuron.id].currentRule = rules[i];
-                        draft[neuron.id].delay = delay;
-                        break;
+                        validRules.push(rules[i]);
                     }
                 } 
+                var indexToUse = 0
+                if(validRules.length == 1){
+                    draft[neuron.id].currentRule = validRules[0];
+                    draft[neuron.id].delay = delay
+                }else if(true && validRules.length > 1){
+                    var randomIndex = Math.floor(Math.random() * (validRules.length)) 
+                    var [requires, symbol, consumes, produces, delay] = parseRule(rules[randomIndex]);
+                    draft[neuron.id].currentRule = validRules[randomIndex];
+                    draft[neuron.id].delay = delay
+                }
+                //change to if(isRandom)
+
             }
             //work on the rule
             if(neuron.currentRule){
+                console.log(neuron.currentRule);
                 if(neuron.delay >= 0){
                     let newDelay = neuron.delay.valueOf();
                     newDelay--;
                     draft[neuron.id].delay = newDelay;
                 }
                 if(neuron.delay < 0){
-                    
                     //consume spikes
                     var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
+                    console.log(neuron.id, neuron.currentRule,requires, symbol, consumes, produces, delay)
                     let newSpikes = neuron.spikes.valueOf();
                     newSpikes-=consumes;
                     draft[neuron.id].spikes = newSpikes;
                     //send spikes
                     const neuronOutKeys = neuron.out;
-                    console.log("produces",produces, neuron.currentRule);
                     for (let k of neuronOutKeys) {
                     spikeAdds[k] =
                         k in spikeAdds ? spikeAdds[k] + produces : produces

@@ -65,6 +65,7 @@ const formReducer = (state, event) => {
 function App() {
   const [neurons, setNeurons] = useImmer(originalNeurons);
   const [time, setTime] = useState(0);
+  const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -200,7 +201,7 @@ function App() {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons,time));
+    await setNeurons(neurons => step(neurons,time,isRandom));
     setTime(time => time + 1);
   }
   const onBackward = async () =>{
@@ -261,7 +262,6 @@ function App() {
             </Row>
           </Col>
         </Row>
-
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
         <Button onClick={onBackward}>Back</Button>{' '}
@@ -273,7 +273,15 @@ function App() {
         <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
       </div>
       <div>
-        Time: {time == 0 ? "Start playing!" : time}
+        Time: {time == 0 ? "Start playing!" : time} 
+        <Form>
+          <Form.Group id="formGridCheckbox">
+            <Form.Check type="checkbox" 
+              label="Pseudorandom" 
+              value={isRandom} 
+              onChange={(event)=>{setIsRandom(isRandom=>!isRandom)}} />
+          </Form.Group>
+        </Form>
       </div>
       <hr />
       <Snapse
@@ -298,7 +306,6 @@ function App() {
         handleError={showError}
         neurons={neurons}
       />
-
     </Container>
   );
 }
