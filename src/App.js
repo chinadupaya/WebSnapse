@@ -10,6 +10,7 @@ import { step, backStep } from "./utils/automata";
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
+import ChoiceHistory from './components/ChoiceHistory/ChoiceHistory';
 var originalNeurons = {
   n1: {
     id: "n1",
@@ -284,6 +285,7 @@ function App() {
         </Form>
       </div>
       <hr />
+
       <Snapse
         neurons={neurons}
         onEdgeCreate={(src, dst, addedEles) => {
@@ -291,6 +293,7 @@ function App() {
           addedEles.remove();
         }}
         handleChangePosition={handleNewPosition} />
+      <ChoiceHistory time={time}/>
       <NewNodeForm showNewNodeModal={showNewNodeModal}
         handleCloseModal={handleClose}
         handleNewNode={handleNewNode}

@@ -9,21 +9,19 @@ export function parseRule(rule){
       const delay = parseInt(delayStr, 10)
       return[requires.length, symbol, consumes.length, produces.length, delay];
     }else if(forgetRes){
-
         const [, requires,symbol,consumes, produces, delayStr] = forgetRes;
-
         return [requires.length, symbol, consumes.length, 0, 0];
     }
     return false
 }
 export function canUseRule(requires, symbol, spikes){
     if(symbol && symbol == '+'){
-        if (spikes > requires){
+        if (spikes >= requires){
             return true
         }
     }
     else if(symbol && symbol == '*'){
-        if (spikes >= requires){
+        if (spikes >= requires-1){
             return true
         }
     }
@@ -52,10 +50,11 @@ export function step(neurons,time,isRandom){
                 var indexToUse = 0
                 if(validRules.length == 1){
                     draft[neuron.id].currentRule = validRules[0];
+                    var [requires, symbol, consumes, produces, delay] = parseRule(validRules[0]);
                     draft[neuron.id].delay = delay
                 }else if(true && validRules.length > 1){
                     var randomIndex = Math.floor(Math.random() * (validRules.length)) 
-                    var [requires, symbol, consumes, produces, delay] = parseRule(rules[randomIndex]);
+                    var [requires, symbol, consumes, produces, delay] = parseRule(validRules[randomIndex]);
                     draft[neuron.id].currentRule = validRules[randomIndex];
                     draft[neuron.id].delay = delay
                 }
@@ -64,7 +63,6 @@ export function step(neurons,time,isRandom){
             }
             //work on the rule
             if(neuron.currentRule){
-                console.log(neuron.currentRule);
                 if(neuron.delay >= 0){
                     let newDelay = neuron.delay.valueOf();
                     newDelay--;
@@ -73,7 +71,6 @@ export function step(neurons,time,isRandom){
                 if(neuron.delay < 0){
                     //consume spikes
                     var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
-                    console.log(neuron.id, neuron.currentRule,requires, symbol, consumes, produces, delay)
                     let newSpikes = neuron.spikes.valueOf();
                     newSpikes-=consumes;
                     draft[neuron.id].spikes = newSpikes;
@@ -114,7 +111,6 @@ export function step(neurons,time,isRandom){
 export function backStep(time){
     console.log("back step automata");
     var oldState = JSON.parse(localStorage.getItem(time+'sec'));
-    console.log(time, oldState)
     return oldState;
     
 }
