@@ -7,6 +7,7 @@ import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
 import { step, backStep } from "./utils/automata";
+import ChooseRuleForm from './components/forms/ChooseRuleForm';
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
@@ -69,11 +70,22 @@ function App() {
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
+  const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState("");
-  const [pBar, setPBar] = useState(0)
+  const [pBar, setPBar] = useState(0);  
+  const handleClose = () => setShowNewNodeModal(false);
+  const handleShow = () => setShowNewNodeModal(true);
+  const handleCloseEditModal = () => setShowEditModal(false);
+  const handleShowEditModal = () => setShowEditModal(true);
+  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
+  const runChooseRule = (rules)=>{
+    console.log(rules);
+  }
   const showError = (text) => {
     setError(text);
     setTimeout(() => {
@@ -185,12 +197,7 @@ function App() {
   function handlePlay() {
     setIsPlaying(p => !p);
   }
-  const handleClose = () => setShowNewNodeModal(false);
-  const handleShow = () => setShowNewNodeModal(true);
-  const handleCloseEditModal = () => setShowEditModal(false);
-  const handleShowEditModal = () => setShowEditModal(true);
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
-  const handleShowDeleteModal = () => setShowDeleteModal(true);
+
   const handleReset = () => {
     setNeurons(draft => draft = originalNeurons);
     setTime(0);
@@ -202,7 +209,7 @@ function App() {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons,time,isRandom));
+    await setNeurons(neurons => step(neurons,time,isRandom, setShowChooseRuleModal));
     setTime(time => time + 1);
   }
   const onBackward = async () =>{
@@ -232,6 +239,11 @@ function App() {
     }
     return () => clearInterval(interval);
   }, [isPlaying, onIntervalStepRef])
+  useEffect(()=>{
+    if(showChooseRuleModal){
+      console.log("showChooseRuleModal is true");
+    }
+  })
   return (
     <Container>
       {error && <Alert variant="danger">
@@ -286,7 +298,6 @@ function App() {
         </Form>
       </div>
       <hr />
-
       <Snapse
         neurons={neurons}
         onEdgeCreate={(src, dst, addedEles) => {
@@ -310,6 +321,8 @@ function App() {
         handleError={showError}
         neurons={neurons}
       />
+      <ChooseRuleForm showChooseRuleModal={showChooseRuleModal} 
+      handleCloseChooseRuleModal={handleCloseChooseRuleModal}/>
     </Container>
   );
 }

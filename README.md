@@ -1,8 +1,5 @@
 # TO DO
-- Accept non-determinism when choosing rules in automata.js
-- accept exponents in rules
 - change style if -1 delay
-- Choice history
 - implement animations >_<
 - convert JSON to XML
 
@@ -13,8 +10,11 @@
 # MAYBE
 - show which rule has been selected
 - adjust time interval
+- accept exponents in rules
 
 # Done
+- Choice history
+- Accept non-determinism when choosing rules in automata.js
 - Back step
 - Play and Pause
 - Load JSON file

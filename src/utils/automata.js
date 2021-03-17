@@ -30,7 +30,7 @@ export function canUseRule(requires, symbol, spikes){
     }
     return false;
 }
-export function step(neurons,time,isRandom){
+export function step(neurons,time,isRandom, setShowChooseRuleModal){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];
@@ -57,6 +57,9 @@ export function step(neurons,time,isRandom){
                     var [requires, symbol, consumes, produces, delay] = parseRule(validRules[randomIndex]);
                     draft[neuron.id].currentRule = validRules[randomIndex];
                     draft[neuron.id].delay = delay
+                }else if(isRandom == false && validRules.length > 1){ 
+                    console.log(validRules);
+                    setShowChooseRuleModal(true);
                 }
                 //change to if(isRandom)
 
