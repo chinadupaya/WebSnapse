@@ -23,9 +23,6 @@ const ChoiceHistory = ({time}) =>{
         neuronRows.push(TableRow(neuronCells));
         neuronCells = []
     }
-    
-
-    console.log(neuronRows);
     return(
         <div>
             <Table striped bordered hover>

@@ -279,8 +279,9 @@ function App() {
           <Form.Group id="formGridCheckbox">
             <Form.Check type="checkbox" 
               label="Pseudorandom" 
-              value={isRandom} 
-              onChange={(event)=>{setIsRandom(isRandom=>!isRandom)}} />
+              defaultChecked={isRandom}
+              onChange={()=>{
+                setIsRandom(!isRandom)}} />
           </Form.Group>
         </Form>
       </div>

@@ -52,7 +52,7 @@ export function step(neurons,time,isRandom){
                     draft[neuron.id].currentRule = validRules[0];
                     var [requires, symbol, consumes, produces, delay] = parseRule(validRules[0]);
                     draft[neuron.id].delay = delay
-                }else if(true && validRules.length > 1){
+                }else if(isRandom == true && validRules.length > 1){
                     var randomIndex = Math.floor(Math.random() * (validRules.length)) 
                     var [requires, symbol, consumes, produces, delay] = parseRule(validRules[randomIndex]);
                     draft[neuron.id].currentRule = validRules[randomIndex];
