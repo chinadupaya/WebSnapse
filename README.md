@@ -1,7 +1,7 @@
 # TO DO
 - change style if -1 delay
 - implement animations >_<
-- convert JSON to XML
+- convert JSON to XML and vice versa [link to npm module](https://www.npmjs.com/package/xml-js)
 
 # BUGS
 - can't clear the whole screen (must always be at least one neuron)

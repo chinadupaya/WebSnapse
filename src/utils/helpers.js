@@ -56,8 +56,9 @@ export const createOutputNeuron = (id,x,y,label,output,spike) => [
 ]
 export const checkValidRule = (rule) =>{
     const re = /(a+)(\+*\**)\/(a+)->(a+);([0-9]+)/
+    const testRe = /(a+)(\(*a*\)*)(\+*\**)\/(a+)->(a+);([0-9]+)/
     const forgetRe=/(a+)(\+*\**)\/(a+)->(0);(0)/
-    var result = re.exec(rule) || forgetRe.exec(rule);
+    var result = testRe.exec(rule) || forgetRe.exec(rule);
     console.log(result);    
     return result;
 }

@@ -1,26 +1,50 @@
 import produce from 'immer'
 export function parseRule(rule){
     const re = /(a+)(\+*\**)\/(a+)->(a+);([0-9]+)/
-    const forgetRe=/(a+)(\+*\**)\/(a+)->(0);(0)/
+    const forgetRe=/(a+)(\(*a*\)*)(\+*\**)\/(a+)->(0);(0)/
+    const testRe = /(a+)(\(*a*\)*)(\+*\**)\/(a+)->(a+);([0-9]+)/
     const res = re.exec(rule)
-    const forgetRes = forgetRe.exec(rule)
-    if (res) {
+    const testRes = testRe.exec(rule);
+    const forgetRes = forgetRe.exec(rule);
+    
+    /* if (res) {
       const [, requires, symbol, consumes, produces, delayStr] = res
       const delay = parseInt(delayStr, 10)
       return[requires.length, symbol, consumes.length, produces.length, delay];
+    } */
+    if (testRes) {
+        //console.log(testRes);
+        const [, requires, grouped, symbol, consumes, produces, delayStr] = testRes
+        const delay = parseInt(delayStr, 10)
+        return[requires.length, grouped.length-2, symbol, consumes.length, produces.length, delay];
     }else if(forgetRes){
-        const [, requires,symbol,consumes, produces, delayStr] = forgetRes;
-        return [requires.length, symbol, consumes.length, 0, 0];
+        const [, requires,grouped, symbol,consumes, produces, delayStr] = forgetRes;
+        return [requires.length,grouped.length-2, symbol, consumes.length, 0, 0];
     }
+    
+
     return false
 }
-export function canUseRule(requires, symbol, spikes){
-    if(symbol && symbol == '+'){
+export function canUseRule(requires, grouped, symbol, spikes){
+    console.log(requires, grouped, symbol, spikes);
+    if(symbol == '+'){
+        if(grouped > 0){
+            if ( (spikes - requires) % grouped == 0 && (spikes-requires) >= grouped){
+                return true;
+            }
+            return false;
+        }
         if (spikes >= requires){
             return true
         }
     }
-    else if(symbol && symbol == '*'){
+    else if(symbol == '*'){
+        if(grouped > 0){
+            if ( (spikes - requires) % grouped == 0){
+                return true;
+            }
+            return false;
+        }
         if (spikes >= requires-1){
             return true
         }
@@ -38,30 +62,33 @@ export function step(neurons,time,isRandom, setShowChooseRuleModal){
             var neuron = draft[k];
             //choose rule to follow if not working on a rule currently
             if(!neuron.currentRule && !neuron.isOutput){
+                delete draft[neuron.id].currentRule;
                 //pick a rule
                 var rules = neuron.rules.split(' ');
                 var validRules=[];
                 for (var i=0;i<rules.length;i++){
-                    var [requires, symbol, consumes, produces, delay] = parseRule(rules[i]);
-                    if(canUseRule(requires,symbol,neuron.spikes)){
+                    var [requires, grouped, symbol, consumes, produces, delay] = parseRule(rules[i]);
+                    if(canUseRule(requires,grouped,symbol,neuron.spikes)){
+                        console.log(rules[i]);
                         validRules.push(rules[i]);
                     }
                 } 
                 var indexToUse = 0
                 if(validRules.length == 1){
                     draft[neuron.id].currentRule = validRules[0];
-                    var [requires, symbol, consumes, produces, delay] = parseRule(validRules[0]);
+                    draft[neuron.id].chosenRule = validRules[0];
+                    var [requires, grouped, symbol, consumes, produces, delay] = parseRule(validRules[0]);
                     draft[neuron.id].delay = delay
                 }else if(isRandom == true && validRules.length > 1){
                     var randomIndex = Math.floor(Math.random() * (validRules.length)) 
-                    var [requires, symbol, consumes, produces, delay] = parseRule(validRules[randomIndex]);
+                    var [requires, grouped, symbol, consumes, produces, delay] = parseRule(validRules[randomIndex]);
                     draft[neuron.id].currentRule = validRules[randomIndex];
+                    draft[neuron.id].chosenRule = validRules[randomIndex];
                     draft[neuron.id].delay = delay
                 }else if(isRandom == false && validRules.length > 1){ 
                     console.log(validRules);
                     setShowChooseRuleModal(true);
                 }
-                //change to if(isRandom)
 
             }
             //work on the rule
@@ -73,7 +100,7 @@ export function step(neurons,time,isRandom, setShowChooseRuleModal){
                 }
                 if(neuron.delay < 0){
                     //consume spikes
-                    var [requires, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
+                    var [requires, grouped, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
                     let newSpikes = neuron.spikes.valueOf();
                     newSpikes-=consumes;
                     draft[neuron.id].spikes = newSpikes;

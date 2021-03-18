@@ -14,10 +14,10 @@ const ChoiceHistory = ({time}) =>{
         neuronCells.push(TableCell(i));
         var state = JSON.parse(localStorage.getItem(i+"sec"));
         for(var k in state){
-            if(state[k].currentRule){
-                neuronCells.push(TableCell(state[k].currentRule));
+            if(state[k].chosenRule){
+                neuronCells.push(TableCell(state[k].chosenRule));
             }else{
-                neuronCells.push(TableCell("No active rule"));
+                neuronCells.push(TableCell("No chosen rule"));
             }
         }
         neuronRows.push(TableRow(neuronCells));

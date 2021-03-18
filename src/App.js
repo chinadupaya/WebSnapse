@@ -253,10 +253,10 @@ function App() {
         <h1>WebSnapse</h1>
         <Row>
           <Col>
-            <Button variant="primary" onClick={handleShow}>New Node</Button>{' '}
-            <Button variant="primary" onClick={handleNewOutput}>New Output Node</Button>{' '}
-            <Button variant="info" onClick={handleShowEditModal}>Edit Node</Button>{' '}
-            <Button variant="danger" onClick={handleShowDeleteModal}>Delete Node</Button>{' '}
+            <Button variant="primary" onClick={handleShow} disabled={time>0 ? true : false}>New Node</Button>{' '}
+            <Button variant="primary" onClick={handleNewOutput} disabled={time>0 ? true : false}>New Output Node</Button>{' '}
+            <Button variant="info" onClick={handleShowEditModal} disabled={time>0 ? true : false}>Edit Node</Button>{' '}
+            <Button variant="danger" onClick={handleShowDeleteModal} disabled={time>0 ? true : false}>Delete Node</Button>{' '}
           </Col>
           <Col>
             <Row>
