@@ -54,10 +54,24 @@ export function canUseRule(requires, grouped, symbol, spikes){
     }
     return false;
 }
-export function step(neurons,time,isRandom, setShowChooseRuleModal){
+function loopArrayAsync(draft, callback){
+    var objKeys = Object.keys(draft);
+    var index;
+    index = 0;
+    loop();
+    function loop(){
+        if (index < objKeys.length){
+            var neuron = draft[objKeys[index]]
+        }else{
+            callback();
+        }
+    }
+}
+export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];
+        var objKeys = Object.keys(draft);
         for (var k in draft){
             var neuron = draft[k];
             //choose rule to follow if not working on a rule currently
@@ -72,8 +86,7 @@ export function step(neurons,time,isRandom, setShowChooseRuleModal){
                         console.log(rules[i]);
                         validRules.push(rules[i]);
                     }
-                } 
-                var indexToUse = 0
+                }   
                 if(validRules.length == 1){
                     draft[neuron.id].currentRule = validRules[0];
                     draft[neuron.id].chosenRule = validRules[0];
@@ -86,8 +99,8 @@ export function step(neurons,time,isRandom, setShowChooseRuleModal){
                     draft[neuron.id].chosenRule = validRules[randomIndex];
                     draft[neuron.id].delay = delay
                 }else if(isRandom == false && validRules.length > 1){ 
-                    console.log(validRules);
-                    setShowChooseRuleModal(true);
+                    //console.log(validRules);
+                    handleStartGuidedMode(validRules, neuron.id);
                 }
 
             }

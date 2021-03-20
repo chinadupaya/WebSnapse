@@ -5,7 +5,7 @@
 
 # BUGS
 - can't clear the whole screen (must always be at least one neuron)
-- forgetting rule is still emitting a spike?? (case: naturally even)
+- when loading XML files, bitstring value is an Object
 
 # MAYBE
 - show which rule has been selected

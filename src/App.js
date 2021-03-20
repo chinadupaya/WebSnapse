@@ -12,6 +12,9 @@ import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
 import ChoiceHistory from './components/ChoiceHistory/ChoiceHistory';
+import convert from 'xml-js';
+import { saveAs } from 'file-saver';
+var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
 var originalNeurons = {
   n1: {
     id: "n1",
@@ -75,7 +78,7 @@ function App() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState("");
-  const [pBar, setPBar] = useState(0);  
+  const [pBar, setPBar] = useState(0);
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
   const handleCloseEditModal = () => setShowEditModal(false);
@@ -83,9 +86,6 @@ function App() {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
-  const runChooseRule = (rules)=>{
-    console.log(rules);
-  }
   const showError = (text) => {
     setError(text);
     setTimeout(() => {
@@ -94,9 +94,14 @@ function App() {
   }
   const handleSave = () => {
     //Convert JSON Array to string.
-    var json = JSON.stringify(neurons);
-
-    //Convert JSON string to BLOB.
+    var wrapper = { content: neurons };
+    console.log(neurons);
+    var result = convert.json2xml(wrapper, options);
+    console.log(wrapper);
+    //var json = JSON.stringify(neurons);
+    var blob = new Blob([result], { type: "text/xml;charset=utf-8", });
+    saveAs(blob, Date().toString() + "-Neurons.xmp");
+    /* //Convert JSON string to BLOB.
     json = [json];
     var blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
 
@@ -113,22 +118,93 @@ function App() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-    }
+    } */
   }
   const handleLoad = (input) => {
-    console.log(input);
     let file = input.files[0];
-    console.log(file);
-    if (file.type && file.type.indexOf('text/plain') === -1) {
 
-      showError("File is not a text file");
+    if (file.type && file.type.indexOf('text/xml') === -1) {
+
+      showError("File is not a xml file");
       return;
     }
     const reader = new FileReader();
+    function nativeType(value) {
+      var nValue = Number(value);
+      if (!isNaN(nValue)) {
+        return nValue;
+      }
+      var bValue = value.toLowerCase();
+      if (bValue === 'true') {
+        return true;
+      } else if (bValue === 'false') {
+        return false;
+      }
+      return value;
+    }
+    function nativeType(value) {
+      var nValue = Number(value);
+      if (!isNaN(nValue)) {
+        return nValue;
+      }
+      var bValue = value.toLowerCase();
+      if (bValue === 'true') {
+        return true;
+      } else if (bValue === 'false') {
+        return false;
+      }
+      return value;
+    }
+
+    var removeJsonTextAttribute = async function (value, parentElement) {
+      try {
+        const parentOfParent = parentElement._parent;
+        const pOpKeys = Object.keys(parentElement._parent);
+        const keyNo = pOpKeys.length;
+        const keyName = pOpKeys[keyNo - 1];
+        const arrOfKey = parentElement._parent[keyName];
+        const arrOfKeyLen = arrOfKey.length;
+        if (arrOfKeyLen > 0 ) {
+          const arr = arrOfKey;
+          const arrIndex = arrOfKey.length - 1;
+          arr[arrIndex] = value;
+        } else if(keyName=="out"){
+          parentElement._parent[keyName] = [value];
+        }else if(keyName=="bitstring"){
+          parentElement._parent[keyName] = " ";
+        }
+        else {
+          parentElement._parent[keyName] = nativeType(value);
+        }
+
+      } catch (e) { }
+    }
     reader.addEventListener('load', (event) => {
-      console.log(JSON.parse(event.target.result));
-      setNeurons(draft => draft = JSON.parse(event.target.result));
+      var options = {
+        compact: true,
+        trim: true,
+        ignoreDeclaration: true,
+        ignoreInstruction: true,
+        ignoreAttributes: true,
+        ignoreComment: true,
+        ignoreCdata: true,
+        ignoreDoctype: true,
+        textFn: removeJsonTextAttribute
+      };
+      var result = convert.xml2js(event.target.result, options); // or convert.xml2json(xml, options)
+      console.log(result.content);
+      setNeurons(draft=> draft=result.content);
       setFileName(file.name);
+      //var result = event.target.result.replace( new RegExp( "\\n", "g" ), "");
+      //result = result.replace(/>\s*/g, '>');  // Remove space after >
+      //result = result.replace(/\s*</g, '<');  // Remove space before <
+      //result = result.replace(new RegExp("&gt", "g"),">");
+      //console.log(result);
+      //var newResult = convert.xml2json(result,{compact:true, spaces: 4});
+      //console.log(newResult);
+      //console.log(result);
+      //setNeurons(draft => draft = JSON.parse(event.target.result));
+      //setFileName(file.name);
     });
     reader.readAsText(file);
   }
@@ -154,9 +230,9 @@ function App() {
       draft[newNeuron.id] = newNeuron;
     })
   }
-  async function handleNewOutput(){
+  async function handleNewOutput() {
     await setNeurons(draft => {
-      var newId=shortid.generate()
+      var newId = shortid.generate()
       draft[newId] = {
         id: newId,
         position: { x: 300, y: 300 },
@@ -204,25 +280,33 @@ function App() {
     setIsPlaying(false);
     localStorage.clear();
   }
+  const guidedRules = [];
+  const guidedNeuronId = '';
+  const handleStartGuidedMode = (rules, neuronId) => {
+    setShowChooseRuleModal(true);
+    console.log(rules, neuronId);
+    guidedRules = rules;
+    guidedNeuronId = neuronId;
+  }
   const onForward = async () => {
     if (time == 0) {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons,time,isRandom, setShowChooseRuleModal));
+    await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, () => { console.log("finished steps") }));
     setTime(time => time + 1);
   }
-  const onBackward = async () =>{
-    if(time > 1){
+  const onBackward = async () => {
+    if (time > 1) {
       var tempTime = time.valueOf();
-      await setNeurons(neurons=> backStep(tempTime-2));
-      await setTime(time=> time-1);
-      
+      await setNeurons(neurons => backStep(tempTime - 2));
+      await setTime(time => time - 1);
+
     }
-    else if(time==1){
+    else if (time == 1) {
       handleReset();
     }
-    
+
   }
   const neuronsRef = useRef(neurons)
   neuronsRef.current = neurons
@@ -239,8 +323,8 @@ function App() {
     }
     return () => clearInterval(interval);
   }, [isPlaying, onIntervalStepRef])
-  useEffect(()=>{
-    if(showChooseRuleModal){
+  useEffect(() => {
+    if (showChooseRuleModal) {
       console.log("showChooseRuleModal is true");
     }
   })
@@ -253,10 +337,10 @@ function App() {
         <h1>WebSnapse</h1>
         <Row>
           <Col>
-            <Button variant="primary" onClick={handleShow} disabled={time>0 ? true : false}>New Node</Button>{' '}
-            <Button variant="primary" onClick={handleNewOutput} disabled={time>0 ? true : false}>New Output Node</Button>{' '}
-            <Button variant="info" onClick={handleShowEditModal} disabled={time>0 ? true : false}>Edit Node</Button>{' '}
-            <Button variant="danger" onClick={handleShowDeleteModal} disabled={time>0 ? true : false}>Delete Node</Button>{' '}
+            <Button variant="primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button>{' '}
+            <Button variant="primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button>{' '}
+            <Button variant="info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit Node</Button>{' '}
+            <Button variant="danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete Node</Button>{' '}
           </Col>
           <Col>
             <Row>
@@ -286,14 +370,15 @@ function App() {
         <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
       </div>
       <div>
-        Time: {time == 0 ? "Start playing!" : time} 
+        Time: {time == 0 ? "Start playing!" : time}
         <Form>
           <Form.Group id="formGridCheckbox">
-            <Form.Check type="checkbox" 
-              label="Pseudorandom" 
+            <Form.Check type="checkbox"
+              label="Pseudorandom"
               defaultChecked={isRandom}
-              onChange={()=>{
-                setIsRandom(!isRandom)}} />
+              onChange={() => {
+                setIsRandom(!isRandom)
+              }} />
           </Form.Group>
         </Form>
       </div>
@@ -305,7 +390,7 @@ function App() {
           addedEles.remove();
         }}
         handleChangePosition={handleNewPosition} />
-      <ChoiceHistory time={time}/>
+      <ChoiceHistory time={time} />
       <NewNodeForm showNewNodeModal={showNewNodeModal}
         handleCloseModal={handleClose}
         handleNewNode={handleNewNode}
@@ -321,8 +406,10 @@ function App() {
         handleError={showError}
         neurons={neurons}
       />
-      <ChooseRuleForm showChooseRuleModal={showChooseRuleModal} 
-      handleCloseChooseRuleModal={handleCloseChooseRuleModal}/>
+      <ChooseRuleForm showChooseRuleModal={showChooseRuleModal}
+        handleCloseChooseRuleModal={handleCloseChooseRuleModal}
+        rules={guidedRules}
+        neuronId={guidedNeuronId} />
     </Container>
   );
 }
