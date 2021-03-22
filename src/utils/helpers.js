@@ -25,7 +25,7 @@ export const createNeuron = (newId, x,
             parent: newId,
             label: spike
         },
-        position: { x: x, y: y + 60 },
+        position: { x: x, y: y - 60 },
         classes: 'snapse-node__spike'
     },
     {

@@ -2,6 +2,7 @@ const styles = [
     {
         selector: '.snapse-node, .snapse-output',
         style: {
+            'font-family': 'Computer Modern',
             'background-opacity': '0',
             'padding-top': '0',
             'border-width': 0,
@@ -14,6 +15,7 @@ const styles = [
     {
         selector: '.snapse-node__rules, .snapse-node__output',
         style: {
+            'font-family': 'Computer Modern',
             'background-color': 'white',
             'border-width': 1,
             events: 'no',
@@ -30,6 +32,7 @@ const styles = [
     {
         selector: '.snapse-node__time, .snapse-node__spike',
         style: {
+            'font-family': 'Computer Modern',
             'background-opacity': '0',
             'text-halign': 'center',
             'text-valign': 'center',
@@ -58,6 +61,7 @@ const styles = [
     {
         selector: 'edge',
         style: {
+            'font-family': 'Computer Modern',
             'curve-style': 'bezier',
             'target-arrow-shape': 'triangle',
             'text-background-color': 'white',

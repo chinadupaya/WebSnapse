@@ -1,0 +1,7 @@
+@font-face{
+    font-family: 'LatexFont';
+    src: url(../../../public/fonts/computer-modern/cmunbsr.ttf)
+}
+*{
+    font-family: 'LatexFont';
+}
