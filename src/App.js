@@ -3,6 +3,7 @@ import './App.css';
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
 import { Button, Container, Alert, Row, Col, Form } from 'react-bootstrap';
+import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
@@ -98,27 +99,8 @@ function App() {
     console.log(neurons);
     var result = convert.json2xml(wrapper, options);
     console.log(wrapper);
-    //var json = JSON.stringify(neurons);
     var blob = new Blob([result], { type: "text/xml;charset=utf-8", });
     saveAs(blob, Date().toString() + "-Neurons.xmp");
-    /* //Convert JSON string to BLOB.
-    json = [json];
-    var blob1 = new Blob(json, { type: "text/plain;charset=utf-8" });
-
-    //Check the Browser.
-    var isIE = false || !!document.documentMode;
-    if (isIE) {
-      window.navigator.msSaveBlob(blob1, Date().toString() + "-Neurons.txt");
-    } else {
-      var url = window.URL || window.webkitURL;
-      var link = url.createObjectURL(blob1);
-      var a = document.createElement("a");
-      a.download = new Date().toISOString() + "-Neurons.txt";
-      a.href = link;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } */
   }
   const handleLoad = (input) => {
     let file = input.files[0];
@@ -195,16 +177,6 @@ function App() {
       console.log(result.content);
       setNeurons(draft=> draft=result.content);
       setFileName(file.name);
-      //var result = event.target.result.replace( new RegExp( "\\n", "g" ), "");
-      //result = result.replace(/>\s*/g, '>');  // Remove space after >
-      //result = result.replace(/\s*</g, '<');  // Remove space before <
-      //result = result.replace(new RegExp("&gt", "g"),">");
-      //console.log(result);
-      //var newResult = convert.xml2json(result,{compact:true, spaces: 4});
-      //console.log(newResult);
-      //console.log(result);
-      //setNeurons(draft => draft = JSON.parse(event.target.result));
-      //setFileName(file.name);
     });
     reader.readAsText(file);
   }
@@ -361,12 +333,12 @@ function App() {
         </Row>
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
-        <Button onClick={onBackward}>Back</Button>{' '}
+        <Button onClick={onBackward}><SkipBackwardFill/></Button>{' '}
         <div style={{ display: 'inline-block' }}>
           <ProgressBar key={pBar} isPlaying={isPlaying} />
-          <Button onClick={handlePlay}>{isPlaying ? "Pause" : "Play"}</Button>
+          <Button onClick={handlePlay}>{isPlaying ? <PauseFill/> : <PlayFill/>}</Button>
         </div> {' '}
-        <Button onClick={() => onForward()}>Next</Button>{' '}
+        <Button onClick={() => onForward()}><SkipForwardFill/></Button>{' '}
         <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
       </div>
       <div>
