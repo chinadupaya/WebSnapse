@@ -26,7 +26,6 @@ export function parseRule(rule){
     return false
 }
 export function canUseRule(requires, grouped, symbol, spikes){
-    console.log(requires, grouped, symbol, spikes);
     if(symbol == '+'){
         if(grouped > 0){
             if ( (spikes - requires) % grouped == 0 && (spikes-requires) >= grouped){
@@ -71,7 +70,7 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];
-        var objKeys = Object.keys(draft);
+        var neuronValidRules = {};
         for (var k in draft){
             var neuron = draft[k];
             //choose rule to follow if not working on a rule currently
@@ -83,7 +82,6 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
                 for (var i=0;i<rules.length;i++){
                     var [requires, grouped, symbol, consumes, produces, delay] = parseRule(rules[i]);
                     if(canUseRule(requires,grouped,symbol,neuron.spikes)){
-                        console.log(rules[i]);
                         validRules.push(rules[i]);
                     }
                 }   
@@ -99,11 +97,18 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
                     draft[neuron.id].chosenRule = validRules[randomIndex];
                     draft[neuron.id].delay = delay
                 }else if(isRandom == false && validRules.length > 1){ 
-                    //console.log(validRules);
-                    handleStartGuidedMode(validRules, neuron.id);
+                    neuronValidRules[neuron.id] = validRules;
                 }
-
+                
             }
+        }
+        if(Object.keys(neuronValidRules).length > 0){
+            console.log(neuronValidRules);
+            handleStartGuidedMode(neuronValidRules);
+            return;
+        }
+        for (var k in draft){
+            var neuron = draft[k];
             //work on the rule
             if(neuron.currentRule){
                 if(neuron.delay >= 0){
@@ -132,7 +137,6 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
                     spikeAdds[k] = 0
                   }
             }
-            
         }
         for (const k in spikeAdds) {
             //states[k].spikes -= spikeAdds[k]

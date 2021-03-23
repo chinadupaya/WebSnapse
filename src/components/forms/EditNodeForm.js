@@ -1,5 +1,5 @@
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { allRulesValid } from "../../utils/helpers";
 
 const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, handleError, neurons }) => {
@@ -9,16 +9,28 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
     const handleClose = () => {
         handleCloseEditModal();
     };
-    
+    useEffect(()=>{
+        firstUpdate();
+    },[]);
+    function firstUpdate(){
+        var filteredObject = Object.keys(neurons).reduce(function(r, e) {
+            if (!neurons[e].isOutput) r[e] = neurons[e];
+            return r;
+        }, {});
+        var keys = Object.keys(filteredObject);
+        setNeuronId(keys[0]);
+        setRules(filteredObject[keys[0]].rules);
+        setStartingSpikes(filteredObject[keys[0]].startingSpikes);
+    }
     var filteredObject = Object.keys(neurons).reduce(function(r, e) {
         if (!neurons[e].isOutput) r[e] = neurons[e];
         return r;
-    }, {})
+    }, {});
     let neuronOptions = Object.keys(filteredObject).map((neuron)=>(
         <option value={neuron} key={neuron}>{neuron}</option>)
-    )
+    )   
     function handleSelectChange(event){
-        console.log(event.target.value);
+        //console.log(event.target.value);
         let id = event.target.value;
         setNeuronId(event.target.value);
         setRules(neurons[id].rules);

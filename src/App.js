@@ -2,12 +2,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Container, Alert, Row, Col, Form } from 'react-bootstrap';
-import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill } from 'react-bootstrap-icons';
+import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
-import { step, backStep } from "./utils/automata";
+import { step, backStep, parseRule } from "./utils/automata";
 import ChooseRuleForm from './components/forms/ChooseRuleForm';
 import NewNodeForm from './components/forms/NewNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
@@ -138,6 +138,7 @@ function App() {
       return value;
     }
 
+
     var removeJsonTextAttribute = async function (value, parentElement) {
       try {
         const parentOfParent = parentElement._parent;
@@ -146,14 +147,14 @@ function App() {
         const keyName = pOpKeys[keyNo - 1];
         const arrOfKey = parentElement._parent[keyName];
         const arrOfKeyLen = arrOfKey.length;
-        if (arrOfKeyLen > 0 ) {
+        if (arrOfKeyLen > 0) {
           const arr = arrOfKey;
           const arrIndex = arrOfKey.length - 1;
           arr[arrIndex] = value;
-        } else if(keyName=="out"){
+        } else if (keyName == "out") {
           parentElement._parent[keyName] = [value];
-        }else if(keyName=="bitstring"){
-          parentElement._parent[keyName] = " ";
+        } else if (keyName == "bitstring") {
+          parentElement._parent[keyName] = "m";
         }
         else {
           parentElement._parent[keyName] = nativeType(value);
@@ -175,7 +176,7 @@ function App() {
       };
       var result = convert.xml2js(event.target.result, options); // or convert.xml2json(xml, options)
       console.log(result.content);
-      setNeurons(draft=> draft=result.content);
+      setNeurons(draft => draft = result.content);
       setFileName(file.name);
     });
     reader.readAsText(file);
@@ -245,20 +246,40 @@ function App() {
   function handlePlay() {
     setIsPlaying(p => !p);
   }
-
+const renderTooltip = (props) => (
+  <Tooltip id="button-tooltip" {...props}>
+    Pseudorandom will allow the system to decide which rule will be executed. Unchecking it will let you decide.
+  </Tooltip>
+);
   const handleReset = () => {
     setNeurons(draft => draft = originalNeurons);
     setTime(0);
     setIsPlaying(false);
     localStorage.clear();
   }
-  const guidedRules = [];
-  const guidedNeuronId = '';
-  const handleStartGuidedMode = (rules, neuronId) => {
+  const [guidedRules, setGuidedRules] = useState({});
+  const handleStartGuidedMode = async (rules) => {
+    await setGuidedRules(rules);
+    
+    console.log(rules);
     setShowChooseRuleModal(true);
-    console.log(rules, neuronId);
-    guidedRules = rules;
-    guidedNeuronId = neuronId;
+  }
+  const handleChosenRules = (data) => {
+    handleCloseChooseRuleModal();
+    setNeurons((draft)=>{
+      for(var j in draft){
+        for (var k in data){
+          if(j==k){
+            var [requires, grouped, symbol, consumes, produces, delay] = parseRule(data[k]);
+            draft[j].delay = delay
+            //console.log(data[k]);
+            draft[j].currentRule = data[k];
+            draft[j].chosenRule = data[k];
+          }
+        }
+      }
+    });
+
   }
   const onForward = async () => {
     if (time == 0) {
@@ -299,7 +320,7 @@ function App() {
     if (showChooseRuleModal) {
       console.log("showChooseRuleModal is true");
     }
-  })
+  },[])
   return (
     <Container>
       {error && <Alert variant="danger">
@@ -316,7 +337,7 @@ function App() {
           </Col>
           <Col>
             <Row>
-              <Col style={{ textAlign: "right" }}><Button variant="primary" onClick={handleSave}>Save</Button>{' '}</Col>
+              <Col style={{ textAlign: "right" }}><Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>{' '}</Col>
               <Col>
                 <Form>
                   <Form.File
@@ -333,24 +354,38 @@ function App() {
         </Row>
       </div>
       <div style={{ textAlign: "center", paddingTop: "1em" }}>
-        <Button onClick={onBackward}><SkipBackwardFill/></Button>{' '}
+        <Button onClick={onBackward}><SkipBackwardFill /></Button>{' '}
         <div style={{ display: 'inline-block' }}>
           <ProgressBar key={pBar} isPlaying={isPlaying} />
-          <Button onClick={handlePlay}>{isPlaying ? <PauseFill/> : <PlayFill/>}</Button>
+          <Button onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
         </div> {' '}
-        <Button onClick={() => onForward()}><SkipForwardFill/></Button>{' '}
+        <Button onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
         <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
       </div>
       <div>
         Time: {time == 0 ? "Start playing!" : time}
         <Form>
           <Form.Group id="formGridCheckbox">
-            <Form.Check type="checkbox"
-              label="Pseudorandom"
-              defaultChecked={isRandom}
-              onChange={() => {
-                setIsRandom(!isRandom)
-              }} />
+            <Row>
+              <Col sm={2}>
+                <Form.Check type="checkbox"
+                  label="Pseudorandom"
+                  defaultChecked={isRandom}
+                  onChange={() => {
+                    setIsRandom(!isRandom)
+                  }} />
+              </Col>
+
+              <Col sm={1} style={{ textAlign: "left" }}>
+                <OverlayTrigger
+                  placement="right"
+                  delay={{ show: 250, hide: 400 }}
+                  overlay={renderTooltip}
+                >
+                  <QuestionCircle />
+                </OverlayTrigger>
+                </Col>
+            </Row>
           </Form.Group>
         </Form>
       </div>
@@ -379,9 +414,10 @@ function App() {
         neurons={neurons}
       />
       <ChooseRuleForm showChooseRuleModal={showChooseRuleModal}
-        handleCloseChooseRuleModal={handleCloseChooseRuleModal}
+        handleCloseChooseRuleModal = {handleCloseChooseRuleModal}
         rules={guidedRules}
-        neuronId={guidedNeuronId} />
+        handleChosenRules={handleChosenRules}
+      />
     </Container>
   );
 }
