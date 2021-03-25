@@ -14,7 +14,9 @@ import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
 import ChoiceHistory from './components/ChoiceHistory/ChoiceHistory';
 import convert from 'xml-js';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { saveAs } from 'file-saver';
+import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
 var originalNeurons = {
   n1: {
@@ -73,6 +75,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
+  const [ Prompt, setDirty, setPristine ] = useUnsavedChanges();
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -101,6 +104,7 @@ function App() {
     console.log(wrapper);
     var blob = new Blob([result], { type: "text/xml;charset=utf-8", });
     saveAs(blob, Date().toString() + "-Neurons.xmp");
+    setPristine();
   }
   const handleLoad = (input) => {
     let file = input.files[0];
@@ -190,7 +194,8 @@ function App() {
   const handleNewPosition = async (position, id) => {
     setNeurons(draft => {
       draft[id].position = position;
-    })
+    });
+    setDirty();
 
   }
   async function handleNewNode(newNeuron) {
@@ -208,7 +213,8 @@ function App() {
         spikes: 0,
         bitstring: ' '
       }
-    })
+    });
+    setDirty();
   }
   async function handleEditNode(id, rules, spikes) {
     console.log("handleEditNode")
@@ -216,10 +222,12 @@ function App() {
       draft[id].startingSpikes = spikes;
       draft[id].spikes = spikes;
       draft[id].rules = rules;
-    })
+    });
+    setDirty();
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
+    setDirty();
     console.log(neurons);
     await setNeurons(draft => {
       //first delete edges connected to neuron
@@ -317,6 +325,9 @@ const renderTooltip = (props) => (
     }
   },[])
   return (
+    <Router>
+      <Switch>
+        <Route path="/">
     <Container>
       {error && <Alert variant="danger">
         {error}
@@ -413,7 +424,11 @@ const renderTooltip = (props) => (
         rules={guidedRules}
         handleChosenRules={handleChosenRules}
       />
+      {Prompt}
     </Container>
+    </Route>
+    </Switch>
+    </Router>
   );
 }
 
