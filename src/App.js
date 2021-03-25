@@ -75,7 +75,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
-  const [ Prompt, setDirty, setPristine ] = useUnsavedChanges();
+  const [Prompt, setDirty, setPristine] = useUnsavedChanges();
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -164,12 +164,12 @@ function App() {
         ignoreDoctype: true,
         textFn: removeJsonTextAttribute
       };
-      var result = await convert.xml2js(event.target.result, options); 
+      var result = await convert.xml2js(event.target.result, options);
       console.log(result.content);
       await setNeurons(draft => draft = result.content);
       await setNeurons(draft => {
-        for(var k in draft){
-          if(draft[k].bitstring){
+        for (var k in draft) {
+          if (draft[k].bitstring) {
             console.log(draft[k].bitstring);
             draft[k].bitstring = " ";
           }
@@ -249,11 +249,11 @@ function App() {
   function handlePlay() {
     setIsPlaying(p => !p);
   }
-const renderTooltip = (props) => (
-  <Tooltip id="button-tooltip" {...props}>
-    Pseudorandom will allow the system to decide which rule will be executed. Unchecking it will let you decide.
-  </Tooltip>
-);
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Pseudorandom will allow the system to decide which rule will be executed. Unchecking it will let you decide.
+    </Tooltip>
+  );
   const handleReset = () => {
     setNeurons(draft => draft = originalNeurons);
     setTime(0);
@@ -263,16 +263,16 @@ const renderTooltip = (props) => (
   const [guidedRules, setGuidedRules] = useState({});
   const handleStartGuidedMode = async (rules) => {
     await setGuidedRules(rules);
-    
+
     console.log(rules);
     setShowChooseRuleModal(true);
   }
   const handleChosenRules = (data) => {
     handleCloseChooseRuleModal();
-    setNeurons((draft)=>{
-      for(var j in draft){
-        for (var k in data){
-          if(j==k){
+    setNeurons((draft) => {
+      for (var j in draft) {
+        for (var k in data) {
+          if (j == k) {
             var [requires, grouped, symbol, consumes, produces, delay] = parseRule(data[k]);
             draft[j].delay = delay
             //console.log(data[k]);
@@ -323,111 +323,111 @@ const renderTooltip = (props) => (
     if (showChooseRuleModal) {
       console.log("showChooseRuleModal is true");
     }
-  },[])
+  }, [])
   return (
     <Router>
       <Switch>
         <Route path="/">
-    <Container>
-      {error && <Alert variant="danger">
-        {error}
-      </Alert>}
-      <div style={{ textAlign: "center" }}>
-        <h1>WebSnapse</h1>
-        <Row>
-          <Col>
-            <Button variant="primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button>{' '}
-            <Button variant="primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button>{' '}
-            <Button variant="info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit Node</Button>{' '}
-            <Button variant="danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete Node</Button>{' '}
-          </Col>
-          <Col>
-            <Row>
-              <Col style={{ textAlign: "right" }}><Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>{' '}</Col>
-              <Col>
-                <Form>
-                  <Form.File
-                    id="custom-file"
-                    label={fileName ? fileName : "Load file..."}
-                    custom
-                    onChange={(e) => { handleLoad(e.target) }}
-                  />
-                </Form>
-
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>
-      <div style={{ textAlign: "center", paddingTop: "1em" }}>
-        <Button onClick={onBackward}><SkipBackwardFill /></Button>{' '}
-        <div style={{ display: 'inline-block' }}>
-          <ProgressBar key={pBar} isPlaying={isPlaying} />
-          <Button onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
-        </div> {' '}
-        <Button onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
-        <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
-      </div>
-      <div>
-        Time: {time == 0 ? "Start playing!" : time}
-        <Form>
-          <Form.Group id="formGridCheckbox">
-            <Row>
-              <Col sm={2}>
-                <Form.Check type="checkbox"
-                  label="Pseudorandom"
-                  defaultChecked={isRandom}
-                  onChange={() => {
-                    setIsRandom(!isRandom)
-                  }} />
-              </Col>
-
-              <Col sm={1} style={{ textAlign: "left" }}>
-                <OverlayTrigger
-                  placement="right"
-                  delay={{ show: 250, hide: 400 }}
-                  overlay={renderTooltip}
-                >
-                  <QuestionCircle />
-                </OverlayTrigger>
+          <Container>
+            {error && <Alert variant="danger">
+              {error}
+            </Alert>}
+            <div style={{ textAlign: "center" }}>
+              <h1>WebSnapse</h1>
+              <Row>
+                <Col>
+                  <Button variant="primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button>{' '}
+                  <Button variant="primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button>{' '}
+                  <Button variant="info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit Node</Button>{' '}
+                  <Button variant="danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete Node</Button>{' '}
                 </Col>
-            </Row>
-          </Form.Group>
-        </Form>
-      </div>
-      <hr />
-      <Snapse
-        neurons={neurons}
-        onEdgeCreate={(src, dst, addedEles) => {
-          onEdgeCreate(src.id(), dst.id())
-          addedEles.remove();
-        }}
-        handleChangePosition={handleNewPosition} />
-      <ChoiceHistory time={time} />
-      <NewNodeForm showNewNodeModal={showNewNodeModal}
-        handleCloseModal={handleClose}
-        handleNewNode={handleNewNode}
-        handleError={showError} />
-      <EditNodeForm showEditModal={showEditModal}
-        handleCloseEditModal={handleCloseEditModal}
-        handleEditNode={handleEditNode}
-        handleError={showError}
-        neurons={neurons} />
-      <DeleteNodeForm showDeleteModal={showDeleteModal}
-        handleCloseDeleteModal={handleCloseDeleteModal}
-        handleDeleteNode={handleDeleteNode}
-        handleError={showError}
-        neurons={neurons}
-      />
-      <ChooseRuleForm showChooseRuleModal={showChooseRuleModal}
-        handleCloseChooseRuleModal = {handleCloseChooseRuleModal}
-        rules={guidedRules}
-        handleChosenRules={handleChosenRules}
-      />
-      {Prompt}
-    </Container>
-    </Route>
-    </Switch>
+                <Col>
+                  <Row>
+                    <Col style={{ textAlign: "right" }}><Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>{' '}</Col>
+                    <Col>
+                      <Form>
+                        <Form.File
+                          id="custom-file"
+                          label={fileName ? fileName : "Load file..."}
+                          custom
+                          onChange={(e) => { handleLoad(e.target) }}
+                        />
+                      </Form>
+
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </div>
+            <div style={{ textAlign: "center", paddingTop: "1em" }}>
+              <Button onClick={onBackward}><SkipBackwardFill /></Button>{' '}
+              <div style={{ display: 'inline-block' }}>
+                <ProgressBar key={pBar} isPlaying={isPlaying} />
+                <Button onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
+              </div> {' '}
+              <Button onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
+              <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
+            </div>
+            <div>
+              Time: {time == 0 ? "Start playing!" : time}
+              <Form>
+                <Form.Group id="formGridCheckbox">
+                  <Row>
+                    <Col sm={2}>
+                      <Form.Check type="checkbox"
+                        label="Pseudorandom"
+                        defaultChecked={isRandom}
+                        onChange={() => {
+                          setIsRandom(!isRandom)
+                        }} />
+                    </Col>
+
+                    <Col sm={1} style={{ textAlign: "left" }}>
+                      <OverlayTrigger
+                        placement="right"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={renderTooltip}
+                      >
+                        <QuestionCircle />
+                      </OverlayTrigger>
+                    </Col>
+                  </Row>
+                </Form.Group>
+              </Form>
+            </div>
+            <hr />
+            <Snapse
+              neurons={neurons}
+              onEdgeCreate={(src, dst, addedEles) => {
+                onEdgeCreate(src.id(), dst.id())
+                addedEles.remove();
+              }}
+              handleChangePosition={handleNewPosition} />
+            <ChoiceHistory time={time} />
+            <NewNodeForm showNewNodeModal={showNewNodeModal}
+              handleCloseModal={handleClose}
+              handleNewNode={handleNewNode}
+              handleError={showError} />
+            <EditNodeForm showEditModal={showEditModal}
+              handleCloseEditModal={handleCloseEditModal}
+              handleEditNode={handleEditNode}
+              handleError={showError}
+              neurons={neurons} />
+            <DeleteNodeForm showDeleteModal={showDeleteModal}
+              handleCloseDeleteModal={handleCloseDeleteModal}
+              handleDeleteNode={handleDeleteNode}
+              handleError={showError}
+              neurons={neurons}
+            />
+            <ChooseRuleForm showChooseRuleModal={showChooseRuleModal}
+              handleCloseChooseRuleModal={handleCloseChooseRuleModal}
+              rules={guidedRules}
+              handleChosenRules={handleChosenRules}
+            />
+            {Prompt}
+          </Container>
+        </Route>
+      </Switch>
     </Router>
   );
 }
