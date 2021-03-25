@@ -53,20 +53,7 @@ export function canUseRule(requires, grouped, symbol, spikes){
     }
     return false;
 }
-function loopArrayAsync(draft, callback){
-    var objKeys = Object.keys(draft);
-    var index;
-    index = 0;
-    loop();
-    function loop(){
-        if (index < objKeys.length){
-            var neuron = draft[objKeys[index]]
-        }else{
-            callback();
-        }
-    }
-}
-export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
+export function step(neurons,time,isRandom, handleStartGuidedMode){
     const newStates = produce(neurons, draft =>{
         const spikeAdds = {}
         const outputTracker = [];

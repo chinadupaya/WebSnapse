@@ -124,21 +124,6 @@ function App() {
       }
       return value;
     }
-    function nativeType(value) {
-      var nValue = Number(value);
-      if (!isNaN(nValue)) {
-        return nValue;
-      }
-      var bValue = value.toLowerCase();
-      if (bValue === 'true') {
-        return true;
-      } else if (bValue === 'false') {
-        return false;
-      }
-      return value;
-    }
-
-
     var removeJsonTextAttribute = async function (value, parentElement) {
       try {
         const parentOfParent = parentElement._parent;
@@ -154,7 +139,8 @@ function App() {
         } else if (keyName == "out") {
           parentElement._parent[keyName] = [value];
         } else if (keyName == "bitstring") {
-          parentElement._parent[keyName] = "m";
+          console.log("bitstring");
+          parentElement._parent[keyName] = "";
         }
         else {
           parentElement._parent[keyName] = nativeType(value);
@@ -162,7 +148,7 @@ function App() {
 
       } catch (e) { }
     }
-    reader.addEventListener('load', (event) => {
+    reader.addEventListener('load', async (event) => {
       var options = {
         compact: true,
         trim: true,
@@ -174,12 +160,21 @@ function App() {
         ignoreDoctype: true,
         textFn: removeJsonTextAttribute
       };
-      var result = convert.xml2js(event.target.result, options); // or convert.xml2json(xml, options)
+      var result = await convert.xml2js(event.target.result, options); 
       console.log(result.content);
-      setNeurons(draft => draft = result.content);
+      await setNeurons(draft => draft = result.content);
+      await setNeurons(draft => {
+        for(var k in draft){
+          if(draft[k].bitstring){
+            console.log(draft[k].bitstring);
+            draft[k].bitstring = " ";
+          }
+        }
+      })
       setFileName(file.name);
     });
     reader.readAsText(file);
+    setTime(0);
   }
 
   const onEdgeCreate = async (src, dst) => {
@@ -286,7 +281,7 @@ const renderTooltip = (props) => (
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, () => { console.log("finished steps") }));
+    await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode));
     setTime(time => time + 1);
   }
   const onBackward = async () => {
