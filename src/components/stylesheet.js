@@ -69,5 +69,14 @@ const styles = [
             width: 1
         }
     },
+    {
+        selector: '.edge--triggering',
+        style: {
+          'line-color': 'magenta',
+          'line-style': 'dashed',
+          'target-arrow-color': 'magenta',
+          width: 3
+        }
+    }
 ]
 export default styles;

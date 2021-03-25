@@ -63,14 +63,15 @@ export const checkValidRule = (rule) =>{
     return result;
 }
 
-export const createEdge = (src,dst) =>{
+export const createEdge = (src,dst,c) =>{
     return {
         data: {
           id: src + '-' + dst,
           source: src,
           target: dst
-        }
-      }
+        },
+        classes: c
+      };
 }
 
 export const allRulesValid = (rules) => {
@@ -113,12 +114,18 @@ export const convertElements = elements =>{
         } 
         if(element.out){
             for (var i=0; i< element.out.length; i++){
-                var newEdges = createEdge(element.id, element.out[i]);
-                array.edges.push(newEdges);
+                if (element.delay<0) {
+                    console.log(element.delay)
+                    for (let out of element.out) {
+                      var newEdge = createEdge(element.id, element.out[i],' edge--triggering');
+                      array.edges.push(newEdge);
+                    }
+                }else{
+                    var newEdges = createEdge(element.id, element.out[i],'');
+                    array.edges.push(newEdges);
+                }
             }
-        }  
-        
-        
+        }
     }
     return array;
 }

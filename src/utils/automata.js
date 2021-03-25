@@ -116,6 +116,7 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
                     newDelay--;
                     draft[neuron.id].delay = newDelay;
                 }
+                console.log(neuron.delay)
                 if(neuron.delay < 0){
                     //consume spikes
                     var [requires, grouped, symbol, consumes, produces, delay] = parseRule(neuron.currentRule);
@@ -136,6 +137,8 @@ export function step(neurons,time,isRandom, handleStartGuidedMode, callback){
                 if (!(k in spikeAdds)) {
                     spikeAdds[k] = 0
                   }
+            }else if(neuron.delay==-1){
+                draft[neuron.id].delay=0;
             }
         }
         for (const k in spikeAdds) {
