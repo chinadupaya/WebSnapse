@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import cytoscape from 'cytoscape'
-import edgehandles from 'cytoscape-edgehandles'
+import cytoscape from 'cytoscape';
+import edgehandles from 'cytoscape-edgehandles';
+import gridGuide from 'cytoscape-grid-guide';
 
 cytoscape.use(edgehandles)
+cytoscape.use(gridGuide)
 ReactDOM.render(
   <React.StrictMode>
     <App />
