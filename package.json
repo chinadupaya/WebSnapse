@@ -9,6 +9,7 @@
     "bootstrap": "^4.6.0",
     "cytoscape": "3.18.0",
     "cytoscape-edgehandles": "^3.6.0",
+    "cytoscape-grid-guide": "2.3.2",
     "file-saver": "^2.0.5",
     "immer": "^8.0.1",
     "react": "^17.0.1",
