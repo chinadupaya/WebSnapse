@@ -81,6 +81,7 @@ function App() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
   const [error, setError] = useState("");
   const [pBar, setPBar] = useState(0);
   const handleClose = () => setShowNewNodeModal(false);
@@ -90,6 +91,12 @@ function App() {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
+  
+  const handleSimulationEnd = () =>{
+    setHasEnded(true);
+    setIsPlaying(false);
+    alert("Simuilation has ended.");
+  }
   const showError = (text) => {
     setError(text);
     setTimeout(() => {
@@ -108,6 +115,7 @@ function App() {
   }
   const handleLoad = (input) => {
     let file = input.files[0];
+    setHasEnded(false);
 
     if (file.type && file.type.indexOf('text/xml') === -1) {
 
@@ -247,7 +255,11 @@ function App() {
     })
   }
   function handlePlay() {
-    setIsPlaying(p => !p);
+    if(hasEnded){
+      alert("Simulation has ended.");
+    }else{
+      setIsPlaying(p => !p);
+    }
   }
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
@@ -258,6 +270,7 @@ function App() {
     setNeurons(draft => draft = originalNeurons);
     setTime(0);
     setIsPlaying(false);
+    setHasEnded(false);
     localStorage.clear();
   }
   const [guidedRules, setGuidedRules] = useState({});
@@ -292,12 +305,17 @@ function App() {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode));
-    setTime(time => time + 1);
+    if (!hasEnded){
+      await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
+      setTime(time => time + 1);
+    }else{
+      alert("Simulation has ended");
+    }
   }
   const onBackward = async () => {
     if (time > 1) {
       var tempTime = time.valueOf();
+      setHasEnded(false);
       await setNeurons(neurons => backStep(tempTime - 2));
       await setTime(time => time - 1);
 
