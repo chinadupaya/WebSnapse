@@ -266,6 +266,9 @@ function App() {
 
     console.log(rules);
     setShowChooseRuleModal(true);
+    if(setShowChooseRuleModal){
+      setIsPlaying(false); //pauses the graph playing while choosing rule
+    }
   }
   const handleChosenRules = (data) => {
     handleCloseChooseRuleModal();
@@ -282,7 +285,7 @@ function App() {
         }
       }
     });
-
+    setIsPlaying(true); // continue playing after choosing rule
   }
   const onForward = async () => {
     if (time == 0) {

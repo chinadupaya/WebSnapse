@@ -8,23 +8,23 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
         handleCloseDeleteModal();
     };
 
-    console.log("it's here", neurons);
-    console.log("neuron[0]",Object.keys(neurons));
+    //console.log("it's here", neurons);
+    //console.log("neuron[0]",Object.keys(neurons));
     
     let neuronOptions = Object.keys(neurons).map((neuron)=>(
         <option value={neuron} key={neuron}>{neuron}</option>)
     )
 
     let defaultNeuron = Object.keys(neurons)[0];
-    console.log("defaultNeuron", defaultNeuron);
+    //console.log("defaultNeuron", defaultNeuron);
 
     function handleSelectChange(event){
-        console.log("Event.target.value", event.target.value)
+        //console.log("Event.target.value", event.target.value)
         setNeuronId(event.target.value);
     }
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(neurons);
+        //console.log(neurons);
         if(neuronId!==''){
             
             handleClose();
