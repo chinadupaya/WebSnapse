@@ -1,5 +1,5 @@
 # Requirements
-- Install [node and npm](https://nodejs.org/en/download/) (Download from link and install)
+- Install [node and npm](https://nodejs.org/en/download/) 
 - Install [yarn](https://classic.yarnpkg.com/en/docs/install/#windows-stable) (Use command: `npm install --global yarn`)
 - Install the libraries for the project by going to the directory where the
   project is then putting in the terminal `yarn install`
