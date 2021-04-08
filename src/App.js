@@ -1,9 +1,10 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './scss/custom.scss';
 import './App.css';
+import { slide as Menu } from 'react-burger-menu'
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle } from 'react-bootstrap-icons';
+import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, DropdownButton, Dropdown } from 'react-bootstrap';
+import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
@@ -91,8 +92,8 @@ function App() {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
-  
-  const handleSimulationEnd = () =>{
+
+  const handleSimulationEnd = () => {
     setHasEnded(true);
     setIsPlaying(false);
     alert("Simuilation has ended.");
@@ -255,9 +256,9 @@ function App() {
     })
   }
   function handlePlay() {
-    if(hasEnded){
+    if (hasEnded) {
       alert("Simulation has ended.");
-    }else{
+    } else {
       setIsPlaying(p => !p);
     }
   }
@@ -279,7 +280,7 @@ function App() {
 
     console.log(rules);
     setShowChooseRuleModal(true);
-    if(setShowChooseRuleModal){
+    if (setShowChooseRuleModal) {
       setIsPlaying(false); //pauses the graph playing while choosing rule
     }
   }
@@ -305,10 +306,10 @@ function App() {
       //copy
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
-    if (!hasEnded){
+    if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
       setTime(time => time + 1);
-    }else{
+    } else {
       alert("Simulation has ended");
     }
   }
@@ -353,68 +354,74 @@ function App() {
             {error && <Alert variant="danger">
               {error}
             </Alert>}
-            <div style={{ textAlign: "center" }}>
-              <h1>WebSnapse</h1>
-              <Row>
-                <Col>
-                  <Button variant="primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button>{' '}
-                  <Button variant="primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button>{' '}
-                  <Button variant="info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit Node</Button>{' '}
-                  <Button variant="danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete Node</Button>{' '}
-                </Col>
-                <Col>
-                  <Row>
-                    <Col style={{ textAlign: "right" }}><Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>{' '}</Col>
-                    <Col>
-                      <Form>
-                        <Form.File
-                          id="custom-file"
-                          label={fileName ? fileName : "Load file..."}
-                          custom
-                          onChange={(e) => { handleLoad(e.target) }}
-                        />
-                      </Form>
-
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </div>
-            <div style={{ textAlign: "center", paddingTop: "1em" }}>
-              <Button onClick={onBackward}><SkipBackwardFill /></Button>{' '}
-              <div style={{ display: 'inline-block' }}>
-                <ProgressBar key={pBar} isPlaying={isPlaying} />
-                <Button onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
-              </div> {' '}
-              <Button onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
-              <Button variant="danger" onClick={handleReset}>Restart</Button>{' '}
-            </div>
-            <div>
-              Time: {time == 0 ? "Start playing!" : time}
+            <Menu>
+              <DropdownButton id="dropdown-basic-button" title="Node Actions" className="menu-item">
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
+              </DropdownButton>
               <Form>
-                <Form.Group id="formGridCheckbox">
-                  <Row>
-                    <Col sm={2}>
-                      <Form.Check type="checkbox"
-                        label="Pseudorandom"
-                        defaultChecked={isRandom}
-                        onChange={() => {
-                          setIsRandom(!isRandom)
-                        }} />
-                    </Col>
-
-                    <Col sm={1} style={{ textAlign: "left" }}>
-                      <OverlayTrigger
-                        placement="right"
-                        delay={{ show: 250, hide: 400 }}
-                        overlay={renderTooltip}
-                      >
-                        <QuestionCircle />
-                      </OverlayTrigger>
-                    </Col>
-                  </Row>
-                </Form.Group>
+                <Form.File
+                  id="custom-file"
+                  label={fileName ? fileName : "Load file..."}
+                  custom
+                  onChange={(e) => { handleLoad(e.target) }}
+                />
               </Form>
+              <div>
+                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>
+              </div>
+            </Menu>
+            <div>
+            <div style={{ textAlign: "center" }}>
+              <h1 style={{ fontWeight: "700"}} className="text-primary">WebSnapse</h1>
+            </div>
+            <Row>
+              <Col>
+                <div>
+                  <div style={{backgroundColor:"#778beb", color:"white", borderRadius:"10px", padding:"0.5em"}}>
+                  <ClockFill color="white" size={30}/> <strong>Time:</strong> {time == 0 ? "Start playing!" : time}
+                  </div>
+                  <Form>
+                    <Form.Group id="formGridCheckbox">
+                      <Row>
+                        <Col sm={5}>
+                          <Form.Check type="checkbox"
+                            label="Pseudorandom"
+                            defaultChecked={isRandom}
+                            onChange={() => {
+                              setIsRandom(!isRandom)
+                            }} />
+                        </Col>
+
+                        <Col sm={1} style={{ textAlign: "left" }}>
+                          <OverlayTrigger
+                            placement="right"
+                            delay={{ show: 250, hide: 400 }}
+                            overlay={renderTooltip}
+                          >
+                            <QuestionCircle />
+                          </OverlayTrigger>
+                        </Col>
+                      </Row>
+                    </Form.Group>
+                  </Form>
+
+                </div>
+              </Col>
+              <Col><div className="snapse-controls" style={{ textAlign: "center" }}>
+                <Button variant="link" onClick={onBackward}><SkipBackwardFill /></Button>{' '}
+                <div style={{ display: 'inline-block' }}>
+                  <ProgressBar key={pBar} isPlaying={isPlaying} />
+                  <Button size="lg" className="snapse-controls-play" onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
+                </div> {' '}
+                <Button variant="link" onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
+
+              </div>
+              </Col>
+              <Col style={{textAlign:"right"}}><Button variant="danger" onClick={handleReset}>Restart</Button>{' '}</Col>
+            </Row>
             </div>
             <hr />
             <Snapse
@@ -468,7 +475,7 @@ const ProgressBar = styled.div`
     css`
       animation: ${shortening} 3s linear; 
     `}
-  background-color: red;
+  background-color: #c44569;
   height: 4px;
   transform-origin: left center;
   margin-bottom: 2px;

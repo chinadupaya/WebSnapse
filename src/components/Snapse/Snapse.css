@@ -1,7 +1,6 @@
-@font-face{
-    font-family: 'LatexFont';
-    src: url(../../../public/fonts/computer-modern/cmunbsr.ttf)
-}
-*{
-    font-family: 'LatexFont';
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+button.center-graph-button{
+    font-family: 'Raleway', sans-serif;
+    text-transform: uppercase;
 }
