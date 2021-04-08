@@ -1,39 +1,12 @@
-# TO DO
-- change style if -1 delay
-- implement animations >_<
-- convert JSON to XML and vice versa [link to npm module](https://www.npmjs.com/package/xml-js)
-
-# BUGS
-- can't clear the whole screen (must always be at least one neuron)
-- when loading XML files, bitstring value is an Object
-
-# MAYBE
-- show which rule has been selected
-- adjust time interval
-- accept exponents in rules
-
-# Done
-- Choice history
-- Accept non-determinism when choosing rules in automata.js
-- Back step
-- Play and Pause
-- Load JSON file
-- save JSON file
-- Add Neurons
-- Add Edges
-- Forgetting rules
-
-- Delete Neurons
-- Delete Edges
-- Edit Neurons
-- add timer
-- Restart
-
-# Getting Started with Create React App
+# Requirements
+- Install (node and npm)[https://nodejs.org/en/download/]
+- Install (yarn)[https://classic.yarnpkg.com/en/docs/install/#windows-stable]
+- Install the libraries for the project by going to the directory where the
+  project is then putting in the terminal `yarn install`
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Running the Application
 
 In the project directory, you can run:
 
