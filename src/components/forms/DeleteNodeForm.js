@@ -3,20 +3,28 @@ import { useReducer, useState } from 'react';
 import { allRulesValid } from "../../utils/helpers";
 
 const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteNode, handleError, neurons }) => {
-    const [neuronId, setNeuronId] = useState(Object.keys(neurons)[0]);
+    const [neuronId, setNeuronId] = useState(Object.keys(neurons));
     const handleClose = () => {
         handleCloseDeleteModal();
     };
+
+    //console.log("it's here", neurons);
+    //console.log("neuron[0]",Object.keys(neurons));
     
     let neuronOptions = Object.keys(neurons).map((neuron)=>(
         <option value={neuron} key={neuron}>{neuron}</option>)
     )
+
+    let defaultNeuron = Object.keys(neurons)[0];
+    //console.log("defaultNeuron", defaultNeuron);
+
     function handleSelectChange(event){
+        //console.log("Event.target.value", event.target.value)
         setNeuronId(event.target.value);
     }
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(neurons);
+        //console.log(neurons);
         if(neuronId!==''){
             
             handleClose();
@@ -25,8 +33,13 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
                 }, 3000);
                 handleDeleteNode(neuronId);
         }else{
-            handleError('Please input a neuron id');
             handleClose();
+                setTimeout(() => {
+                    setNeuronId('');
+                }, 3000);
+                handleDeleteNode(defaultNeuron);
+            //handleError(`Please input a neuron id ${neuronId} none`);
+            //handleClose();
         }
     }
 
@@ -39,7 +52,7 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
                 <Form onSubmit={handleSubmit}>
                     <Form.Group>
                         <Form.Label>Select node to delete</Form.Label>
-                        <Form.Control as="select" value={neuronId} onChange={handleSelectChange}>
+                        <Form.Control as="select" defaultValue={defaultNeuron} value={neuronId} onChange={handleSelectChange}>
                             {neuronOptions}
                         </Form.Control>
                     </Form.Group>
