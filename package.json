@@ -10,6 +10,7 @@
     "cytoscape": "3.18.0",
     "cytoscape-edgehandles": "^3.6.0",
     "cytoscape-grid-guide": "2.3.2",
+    "express": "^4.17.1",
     "file-saver": "^2.0.5",
     "immer": "^8.0.1",
     "react": "^17.0.1",
@@ -28,7 +29,7 @@
     "xml-js": "^1.6.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
