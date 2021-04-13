@@ -3,8 +3,8 @@ import './App.css';
 import { slide as Menu } from 'react-burger-menu'
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, DropdownButton, Dropdown } from 'react-bootstrap';
-import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill } from 'react-bootstrap-icons';
+import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
+import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill, ClockHistory, PlusSquare, Save2 } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
@@ -58,18 +58,6 @@ var originalNeurons = {
     bitstring: ' '
   }
 }
-const formReducer = (state, event) => {
-  if (event.reset) {
-    return {
-      startingSpikes: 0,
-      rules: '',
-    }
-  }
-  return {
-    ...state,
-    [event.name]: event.value
-  }
-}
 
 function App() {
   const [neurons, setNeurons] = useImmer(originalNeurons);
@@ -80,6 +68,7 @@ function App() {
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showChoiceHistoryModal, setShowChoiceHistoryModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
@@ -92,7 +81,8 @@ function App() {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
-
+  const handleShowChoiceHistoryModal = () => setShowChoiceHistoryModal(true);
+  const handleCloseHoiceHistoryModal = () => setShowChoiceHistoryModal(false);
   const handleSimulationEnd = () => {
     setHasEnded(true);
     setIsPlaying(false);
@@ -355,12 +345,17 @@ function App() {
               {error}
             </Alert>}
             <Menu>
-              <DropdownButton id="dropdown-basic-button" title="Node Actions" className="menu-item">
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
+              <Dropdown>
+              <Dropdown.Toggle id="dropdown-basic">
+                <PlusSquare/>{' '}Node Actions
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+              <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
                 <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
                 <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
                 <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
-              </DropdownButton>
+              </Dropdown.Menu>
+              </Dropdown>
               <Form>
                 <Form.File
                   id="custom-file"
@@ -370,7 +365,10 @@ function App() {
                 />
               </Form>
               <div>
-                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}>Save</Button>
+                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}><Save2/>{' '}Save</Button>
+              </div>
+              <div>
+                <Button variant="primary" onClick={handleShowChoiceHistoryModal}><ClockHistory/>{' '}Choice History</Button>
               </div>
             </Menu>
             <div>
@@ -431,7 +429,9 @@ function App() {
                 addedEles.remove();
               }}
               handleChangePosition={handleNewPosition} />
-            <ChoiceHistory time={time} />
+            <ChoiceHistory time={time}
+            showChoiceHistoryModal={showChoiceHistoryModal}
+            handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal} />
             <NewNodeForm showNewNodeModal={showNewNodeModal}
               handleCloseModal={handleClose}
               handleNewNode={handleNewNode}
