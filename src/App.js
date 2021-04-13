@@ -15,7 +15,7 @@ import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
 import ChoiceHistory from './components/ChoiceHistory/ChoiceHistory';
 import convert from 'xml-js';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
