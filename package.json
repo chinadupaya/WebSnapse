@@ -1,5 +1,6 @@
 {
   "name": "thesis",
+  "homepage": "https://chinadupaya.github.io/WebSnapse",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,8 +11,11 @@
     "cytoscape": "3.18.0",
     "cytoscape-edgehandles": "^3.6.0",
     "cytoscape-grid-guide": "2.3.2",
+    "express": "^4.17.1",
     "file-saver": "^2.0.5",
+    "gh-pages": "^3.1.0",
     "immer": "^8.0.1",
+    "jest-canvas-mock": "^2.3.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.3",
     "react-bootstrap-icons": "^1.4.0",
@@ -29,9 +33,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+    
   },
   "eslintConfig": {
     "extends": [

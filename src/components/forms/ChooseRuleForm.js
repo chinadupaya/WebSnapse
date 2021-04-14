@@ -40,7 +40,6 @@ const ChooseRuleForm = ({showChooseRuleModal, handleCloseChooseRuleModal,rules, 
         )
     }
     var ruleList = Object.keys(rules);
-    console.log(ruleList);
     var form = [];
     for (var i=0; i<ruleList.length; i++){
         console.log(i);
