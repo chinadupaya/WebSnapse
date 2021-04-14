@@ -11,6 +11,7 @@ import shortid from 'shortid';
 import { step, backStep, parseRule } from "./utils/automata";
 import ChooseRuleForm from './components/forms/ChooseRuleForm';
 import NewNodeForm from './components/forms/NewNodeForm';
+import NewOutputNodeForm from './components/forms/NewOutputNodeForm';
 import EditNodeForm from './components/forms/EditNodeForm';
 import DeleteNodeForm from './components/forms/DeleteNodeForm';
 import ChoiceHistory from './components/ChoiceHistory/ChoiceHistory';
@@ -104,6 +105,7 @@ function App() {
   const [fileName, setFileName] = useState('');
   const [Prompt, setDirty, setPristine] = useUnsavedChanges(neurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
+  const [showNewOutputModal, setShowNewOutputModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showChoiceHistoryModal, setShowChoiceHistoryModal] = useState(false);
@@ -114,6 +116,8 @@ function App() {
   const [pBar, setPBar] = useState(0);
   const handleClose = () => setShowNewNodeModal(false);
   const handleShow = () => setShowNewNodeModal(true);
+  const handleCloseNewOutputModal = () => setShowNewOutputModal(false);
+  const handleShowNewOutputModal = () => setShowNewOutputModal(true);
   const handleCloseEditModal = () => setShowEditModal(false);
   const handleShowEditModal = () => setShowEditModal(true);
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
@@ -243,16 +247,9 @@ function App() {
     })
     setDirty(true);
   }
-  async function handleNewOutput() {
+  async function handleNewOutput(newOutput) {
     await setNeurons(draft => {
-      var newId = shortid.generate()
-      draft[newId] = {
-        id: newId,
-        position: { x: 300, y: 300 },
-        isOutput: true,
-        spikes: 0,
-        bitstring: ' '
-      }
+      draft[newOutput.id] = newOutput;
     });
     setDirty(true);
   }
@@ -269,7 +266,6 @@ function App() {
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
-    setDirty();
     await setNeurons(draft => {
       //first delete edges connected to neuron
       for (var k in draft) {
@@ -423,7 +419,7 @@ function App() {
               </Dropdown.Toggle>
               <Dropdown.Menu>
               <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleNewOutput} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
                 <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
                 <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
               </Dropdown.Menu>
@@ -507,6 +503,10 @@ function App() {
             <NewNodeForm showNewNodeModal={showNewNodeModal}
               handleCloseModal={handleClose}
               handleNewNode={handleNewNode}
+              handleError={showError} />
+            <NewOutputNodeForm showNewOutputModal={showNewOutputModal}
+              handleCloseNewOutputModal={handleCloseNewOutputModal}
+              handleNewOutput={handleNewOutput}
               handleError={showError} />
             <EditNodeForm showEditModal={showEditModal}
               handleCloseEditModal={handleCloseEditModal}
