@@ -19,6 +19,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
+var keypresses = 0;
 var originalNeurons = {
   n1: {
     id: "n1",
@@ -59,6 +60,41 @@ var originalNeurons = {
   }
 }
 
+const useKey = (key, cb) => {
+  const callbackRef = useRef(cb); 
+
+  useEffect(() => {
+    callbackRef.current = cb;
+  });
+  useEffect(()=> {
+    function debounced(delay, fn) {
+      let timerId;
+      return function (...args) {
+        if (timerId) {
+          clearTimeout(timerId);
+        }
+        timerId = setTimeout(() => {
+          fn(...args);
+          timerId = null;
+        }, delay);
+      }
+    }
+
+    function handleKeyDown(event){
+      if(event.code === key){
+        keypresses++; 
+        console.log("Key presses:" + keypresses);
+        console.log("Key pressed: " + event.code);
+        callbackRef.current(event);
+      }
+    }
+
+    document.addEventListener("keydown", (event) => {event.preventDefault();});
+    document.addEventListener("keydown", debounced(300, handleKeyDown));
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [key]);
+}
+
 function App() {
   const [neurons, setNeurons] = useImmer(originalNeurons);
   const [time, setTime] = useState(0);
@@ -86,6 +122,7 @@ function App() {
   const handleSimulationEnd = () => {
     setHasEnded(true);
     setIsPlaying(false);
+    console.log("alert from simulationEnd");
     alert("Simuilation has ended.");
   }
   const showError = (text) => {
@@ -246,10 +283,10 @@ function App() {
     })
   }
   function handlePlay() {
-    if (hasEnded) {
-      alert("Simulation has ended.");
-    } else {
+    if (!hasEnded){
       setIsPlaying(p => !p);
+    }else{
+      alert("Simulation has ended.");
     }
   }
   const renderTooltip = (props) => (
@@ -299,9 +336,9 @@ function App() {
     if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
       setTime(time => time + 1);
-    } else {
-      alert("Simulation has ended");
-    }
+    }else{
+      alert("Simulation has ended.");
+    } 
   }
   const onBackward = async () => {
     if (time > 1) {
@@ -331,11 +368,36 @@ function App() {
     }
     return () => clearInterval(interval);
   }, [isPlaying, onIntervalStepRef])
+
   useEffect(() => {
     if (showChooseRuleModal) {
       console.log("showChooseRuleModal is true");
     }
   }, [])
+
+    // Key Bindings 
+    function handleSpace(){
+      console.log("Space Pressed");
+      setIsPlaying(p => !p);
+    }
+  
+    function handleRightKey(){
+      console.log("Right Key Pressed");
+      if(!hasEnded){
+        onIntervalStepRef.current();
+      }
+    }
+  
+    function handleLeftKey(){
+      console.log("Left Key Pressed");
+      onBackward();
+    }
+  
+    useKey("Space", handleSpace);
+    useKey("ArrowLeft", handleLeftKey);
+    useKey("ArrowRight", handleRightKey);
+  
+
   return (
     <Router>
       <Switch>
