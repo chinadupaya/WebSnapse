@@ -18,9 +18,10 @@ import convert from 'xml-js';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
+import { original } from 'immer';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
 var keypresses = 0;
-var originalNeurons = {
+var originalNeurons = (window.localStorage.getItem('neurons') != null) ?  JSON.parse(window.localStorage.getItem('neurons')) : {
   n1: {
     id: "n1",
     position: { x: 50, y: 50 },
@@ -58,7 +59,7 @@ var originalNeurons = {
     spikes: 0,
     bitstring: ' '
   }
-}
+};
 
 const useKey = (key, cb) => {
   const callbackRef = useRef(cb); 
@@ -100,7 +101,7 @@ function App() {
   const [time, setTime] = useState(0);
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
-  const [Prompt, setDirty, setPristine] = useUnsavedChanges();
+  const [Prompt, setDirty, setPristine] = useUnsavedChanges(neurons);
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -123,7 +124,7 @@ function App() {
     setHasEnded(true);
     setIsPlaying(false);
     console.log("alert from simulationEnd");
-    alert("Simuilation has ended.");
+    alert("Simulation has ended.");
   }
   const showError = (text) => {
     setError(text);
@@ -134,9 +135,9 @@ function App() {
   const handleSave = () => {
     //Convert JSON Array to string.
     var wrapper = { content: neurons };
-    console.log(neurons);
+    //console.log(neurons);
     var result = convert.json2xml(wrapper, options);
-    console.log(wrapper);
+    //console.log(wrapper);
     var blob = new Blob([result], { type: "text/xml;charset=utf-8", });
     saveAs(blob, Date().toString() + "-Neurons.xmp");
     setPristine();
@@ -201,7 +202,7 @@ function App() {
         textFn: removeJsonTextAttribute
       };
       var result = await convert.xml2js(event.target.result, options);
-      console.log(result.content);
+      console.log("Result.content"); 
       await setNeurons(draft => draft = result.content);
       await setNeurons(draft => {
         for (var k in draft) {
@@ -211,6 +212,7 @@ function App() {
           }
         }
       })
+      originalNeurons = result.content;
       setFileName(file.name);
     });
     reader.readAsText(file);
@@ -253,18 +255,19 @@ function App() {
     setDirty();
   }
   async function handleEditNode(id, rules, spikes) {
-    console.log("handleEditNode")
+    //console.log("handleEditNode")
     await setNeurons(draft => {
       draft[id].startingSpikes = spikes;
       draft[id].spikes = spikes;
       draft[id].rules = rules;
     });
     setDirty();
+    originalNeurons = neurons; //for restart
+    window.localStorage.setItem('neurons', JSON.stringify(neurons));
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
     setDirty();
-    console.log(neurons);
     await setNeurons(draft => {
       //first delete edges connected to neuron
       for (var k in draft) {
@@ -281,6 +284,9 @@ function App() {
       //delete neuron
       delete draft[neuronId];
     })
+    console.log(neurons);
+    originalNeurons = neurons;
+    window.localStorage.setItem('neurons', JSON.stringify(neurons));
   }
   function handlePlay() {
     if (!hasEnded){
@@ -331,6 +337,7 @@ function App() {
   const onForward = async () => {
     if (time == 0) {
       //copy
+      console.log("Time is: " + time);
       originalNeurons = JSON.parse(JSON.stringify(neurons));
     }
     if (!hasEnded) {
