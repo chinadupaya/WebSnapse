@@ -83,6 +83,7 @@ const useKey = (key, cb) => {
 
     function handleKeyDown(event){
       if(event.code === key){
+        //event.preventDefault();
         keypresses++; 
         console.log("Key presses:" + keypresses);
         console.log("Key pressed: " + event.code);
@@ -90,7 +91,7 @@ const useKey = (key, cb) => {
       }
     }
 
-    document.addEventListener("keydown", (event) => {event.preventDefault();});
+    document.addEventListener("keydown", (event) => {if(event.code === "Space"){event.preventDefault();}});
     document.addEventListener("keydown", debounced(300, handleKeyDown));
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [key]);

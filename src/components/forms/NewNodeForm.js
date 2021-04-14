@@ -2,6 +2,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { useReducer, useState } from 'react';
 import { allRulesValid } from "../../utils/helpers";
 import shortid from "shortid";
+
 const formReducer = (state, event) => {
   if (event.reset) {
     return {
@@ -15,13 +16,16 @@ const formReducer = (state, event) => {
   }
 }
 
+const initialFormState = {id:"", rules:"", startingSpikes:0}; 
+
 const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handleError }) => {
   const handleClose = () => {
     handleCloseModal();
   };
-  const [formData, setFormData] = useReducer(formReducer, {});
+  const [formData, setFormData] = useReducer(formReducer, initialFormState);
   const [submitting, setSubmitting] = useState(false);
   const handleChange = event => {
+    console.log(event.target.value);
     console.log(event.target.name);
     setFormData({
       name: event.target.name,
@@ -30,7 +34,7 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
   };
   function handleSubmit(event) {
     event.preventDefault();
-    let newId = shortid.generate();
+    let newId = `${formData.id}-${shortid.generate()}`;
 
     if (allRulesValid(formData.rules)) {
       console.log("All rules valid");
@@ -68,6 +72,10 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
+        <Form.Group>
+            <Form.Label>Node Name</Form.Label>
+            <Form.Control  required name="id" type="text" placeholder="n0" value={formData.id} onChange={handleChange} />
+          </Form.Group>
           <Form.Group>
             <Form.Label>Node Rules</Form.Label>
             <Form.Control required name="rules" type="text" placeholder="a/a->a;0 aa/a->a;1" value={formData.rules} onChange={handleChange} />
@@ -77,7 +85,7 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
           </Form.Group>
           <Form.Group>
             <Form.Label>Starting Spike Number</Form.Label>
-            <Form.Control required name="startingSpikes" type="number" placeholder="0" value={formData.startingSpikes} onChange={handleChange} />
+            <Form.Control required name="startingSpikes" type="number" value={formData.startingSpikes} onChange={handleChange} />
           </Form.Group>
           <Button variant="secondary" onClick={handleClose}>
             Close
