@@ -3,7 +3,7 @@ import { useReducer, useState } from 'react';
 import { allRulesValid } from "../../utils/helpers";
 
 const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteNode, handleError, neurons }) => {
-    const [neuronId, setNeuronId] = useState(Object.keys(neurons));
+    const [neuronId, setNeuronId] = useState('');
     const handleClose = () => {
         handleCloseDeleteModal();
     };
