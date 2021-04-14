@@ -1,4 +1,5 @@
 import { Table, Modal } from "react-bootstrap"
+import './ChoiceHistory.css';
 const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal}) =>{
     var getLatestState = JSON.parse(localStorage.getItem(time-1+"sec"));
     var neuronIds = "There are no neurons";
@@ -24,8 +25,7 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
         neuronCells = []
     }
     return(
-        <Modal show={showChoiceHistoryModal} onHide={handleCloseHoiceHistoryModal}>
-            <div>
+        <Modal show={showChoiceHistoryModal} onHide={handleCloseHoiceHistoryModal} className="custom-choice-history-modal">
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -37,7 +37,6 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
                         {neuronRows}
                     </tbody>
                 </Table>
-            </div>
         </Modal>
     )
 };
