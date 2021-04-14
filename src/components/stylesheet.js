@@ -16,6 +16,7 @@ const styles = [
         selector: '.snapse-node__rules, .snapse-node__output',
         style: {
             'font-family': 'Computer Modern',
+            'font-style':'italic',
             'background-color': 'white',
             'border-width': 1,
             events: 'no',

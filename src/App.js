@@ -234,13 +234,14 @@ function App() {
     setNeurons(draft => {
       draft[id].position = position;
     });
-    setDirty();
+    setDirty(true);
 
   }
   async function handleNewNode(newNeuron) {
     await setNeurons(draft => {
       draft[newNeuron.id] = newNeuron;
     })
+    setDirty(true);
   }
   async function handleNewOutput() {
     await setNeurons(draft => {
@@ -253,7 +254,7 @@ function App() {
         bitstring: ' '
       }
     });
-    setDirty();
+    setDirty(true);
   }
   async function handleEditNode(id, rules, spikes) {
     //console.log("handleEditNode")
@@ -262,9 +263,9 @@ function App() {
       draft[id].spikes = spikes;
       draft[id].rules = rules;
     });
-    setDirty();
+    setDirty(true);
     originalNeurons = neurons; //for restart
-    window.localStorage.setItem('neurons', JSON.stringify(neurons));
+    //window.localStorage.setItem('neurons', JSON.stringify(neurons));
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
@@ -287,7 +288,8 @@ function App() {
     })
     console.log(neurons);
     originalNeurons = neurons;
-    window.localStorage.setItem('neurons', JSON.stringify(neurons));
+    setDirty(true);
+    //window.localStorage.setItem('neurons', JSON.stringify(neurons));
   }
   function handlePlay() {
     if (!hasEnded){

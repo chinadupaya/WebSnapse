@@ -5,7 +5,6 @@ const useUnsavedChanges = (neurons) =>{
     const [isDirty, setDirty] = useState(false);
     const message = "Are you sure you want to exit without saving your system?"
     useEffect(()=>{
-        window.onbeforeunload = isDirty && (() => message);
         function handleUnsavedChanges (){
             console.log("isDirty:" + isDirty);
             if(isDirty){
@@ -14,6 +13,7 @@ const useUnsavedChanges = (neurons) =>{
                 console.log(JSON.parse(window.localStorage.getItem('neurons')));
             }
         }
+        window.onbeforeunload = isDirty && (() => message);
 
         window.addEventListener("beforeunload", handleUnsavedChanges);
         return () => {
