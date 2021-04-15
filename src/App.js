@@ -413,17 +413,7 @@ function App() {
               {error}
             </Alert>}
             <Menu>
-              <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic">
-                <PlusSquare/>{' '}Node Actions
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-              <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
-              </Dropdown.Menu>
-              </Dropdown>
+              
               <Form>
                 <Form.File
                   id="custom-file"
@@ -446,13 +436,11 @@ function App() {
             <Row>
               <Col>
                 <div>
-                  <div style={{backgroundColor:"#778beb", color:"white", borderRadius:"10px", padding:"0.5em"}}>
-                  <ClockFill color="white" size={30}/> <strong>Time:</strong> {time == 0 ? "Start playing!" : time}
-                  </div>
+                  
                   <Form>
                     <Form.Group id="formGridCheckbox">
                       <Row>
-                        <Col sm={5}>
+                        <Col sm={6}>
                           <Form.Check type="checkbox"
                             label="Pseudorandom"
                             defaultChecked={isRandom}
@@ -473,10 +461,16 @@ function App() {
                       </Row>
                     </Form.Group>
                   </Form>
-
+                  { time == 0 ? <div></div> : 
+                    <div style={{backgroundColor:"#778beb", color:"white", borderRadius:"10px", padding:"0.5em"}}>
+                      <ClockFill color="white" size={30}/> <strong>Time:</strong> {time == 0 ? "Start playing!" : time}
+                    </div>
+                  }
+                  
                 </div>
               </Col>
-              <Col><div className="snapse-controls" style={{ textAlign: "center" }}>
+              <Col>
+              <div className="snapse-controls" style={{ textAlign: "center", marginBottom:"0.8em" }}>
                 <Button variant="link" onClick={onBackward}><SkipBackwardFill /></Button>{' '}
                 <div style={{ display: 'inline-block' }}>
                   <ProgressBar key={pBar} isPlaying={isPlaying} />
@@ -484,6 +478,19 @@ function App() {
                 </div> {' '}
                 <Button variant="link" onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
 
+              </div>
+              <div style={{textAlign:"center"}}>
+              <Dropdown>
+              <Dropdown.Toggle id="dropdown-basic">
+                <PlusSquare/>{' '}Node Actions
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+              <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
+                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
+              </Dropdown.Menu>
+              </Dropdown>
               </div>
               </Col>
               <Col style={{textAlign:"right"}}><Button variant="danger" onClick={handleReset}>Restart</Button>{' '}</Col>
