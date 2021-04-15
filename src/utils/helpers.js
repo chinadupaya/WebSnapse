@@ -5,7 +5,7 @@ export const createNeuron = (newId, x,
     time) => [{
         data: {
             id: newId,
-            label: newId
+            label: `${(newId.includes('-'))? newId.substr(0, newId.indexOf('-')) : newId}`
         },
         position: { x: x, y: y },
         classes: 'snapse-node'
@@ -37,9 +37,9 @@ export const createNeuron = (newId, x,
         position: { x: x, y: y + 90 },
         classes: 'snapse-node__time'
     }];
-export const createOutputNeuron = (id,x,y,label,output,spike) => [
+export const createOutputNeuron = (id,x,y,output,spike) => [
     {
-        data: { rootId: id, id: `${id}`, label },
+        data: { rootId: id, id: `${id}`, label: `${(id.includes('-'))? id.substr(0, id.indexOf('-')) : id}`},
         classes: 'snapse-output',
         position: { x: 0, y: 0 }
       },
@@ -107,7 +107,7 @@ export const convertElements = elements =>{
             array.nodes.push(newNodes[3])
             
         }else{
-            var newOutputNode = createOutputNeuron(element.id, element.position.x,element.position.y, element.id, element.bitstring, 0);
+            var newOutputNode = createOutputNeuron(element.id, element.position.x,element.position.y, element.bitstring, 0);
             array.nodes.push(newOutputNode[0])
             array.nodes.push(newOutputNode[1])
             array.nodes.push(newOutputNode[2])

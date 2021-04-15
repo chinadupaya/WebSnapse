@@ -7,8 +7,6 @@ const formReducer = (state, event) => {
   if (event.reset) {
     return {
       id:'',
-      startingSpikes: 0,
-      rules: '',
     }
   }
   return {
@@ -17,11 +15,11 @@ const formReducer = (state, event) => {
   }
 }
 
-const initialFormState = {id:"", rules:"", startingSpikes:0}; 
+const initialFormState = {id:""}; 
 
-const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handleError }) => {
+const NewOutputNodeForm = ({ showNewOutputModal, handleCloseNewOutputModal, handleNewOutput, handleError }) => {
   const handleClose = () => {
-    handleCloseModal();
+    handleCloseNewOutputModal();
   };
   const [formData, setFormData] = useReducer(formReducer, initialFormState);
   const [submitting, setSubmitting] = useState(false);
@@ -36,9 +34,6 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
   function handleSubmit(event) {
     event.preventDefault();
     let newId = `${formData.id}-${shortid.generate()}`;
-
-    if (allRulesValid(formData.rules)) {
-      console.log("All rules valid");
       handleClose();
       setSubmitting(true);
 
@@ -48,45 +43,26 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
           reset: true
         })
       }, 3000);
-      const newNeuron = {
+      const newOutput = {
         id: newId,
-        position: { x: 100, y: 100 },
-        rules: formData.rules,
-        startingSpikes: parseInt(formData.startingSpikes),
-        delay: 0,
-        spikes: parseInt(formData.startingSpikes),
-        isOutput: false,
-        out: []
+        position: { x: 300, y: 300 },
+        isOutput: true,
+        spikes: 0,
+        bitstring: ' '
       }
-      handleNewNode(newNeuron);
-    } else {
-      console.log("One or more of the rules is invalid");
-      handleError("One or more of the rules is invalid");
-      handleClose();
-    };
+      handleNewOutput(newOutput);
   }
 
   return (
-    <Modal show={showNewNodeModal} onHide={handleClose}>
+    <Modal show={showNewOutputModal} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Create New Node</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
         <Form.Group>
-            <Form.Label>Node Name</Form.Label>
+            <Form.Label>Output Node Name</Form.Label>
             <Form.Control  required name="id" type="text" placeholder="n0" value={formData.id} onChange={handleChange} />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Node Rules</Form.Label>
-            <Form.Control required name="rules" type="text" placeholder="a/a->a;0 aa/a->a;1" value={formData.rules} onChange={handleChange} />
-            <Form.Text className="text-muted">
-              Enter valid rules only. Separate each rule with a space.
-              </Form.Text>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Starting Spike Number</Form.Label>
-            <Form.Control required name="startingSpikes" type="number" value={formData.startingSpikes} onChange={handleChange} />
           </Form.Group>
           <Button variant="secondary" onClick={handleClose}>
             Close
@@ -99,4 +75,4 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
     </Modal>
   )
 }
-export default NewNodeForm;
+export default NewOutputNodeForm;
