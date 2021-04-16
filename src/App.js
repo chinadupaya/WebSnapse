@@ -21,7 +21,6 @@ import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 import { original } from 'immer';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
-var keypresses = 0;
 var originalNeurons = (window.localStorage.getItem('neurons') != null) ?  JSON.parse(window.localStorage.getItem('neurons')) : {
   n1: {
     id: "n1",
@@ -62,8 +61,19 @@ var originalNeurons = (window.localStorage.getItem('neurons') != null) ?  JSON.p
   }
 };
 
-const useKey = (key, cb) => {
-  const callbackRef = useRef(cb); 
+function useKey(key, cb){
+  const isFocus = useRef(false);
+  const callbackRef = useRef(cb);
+
+  const inputs = document.getElementsByTagName('input');
+
+  useEffect( () => {for (let input of inputs) {
+    input.addEventListener('focusin', () => {isFocus.current = true; console.log("fOCUS ON ME");});
+    input.addEventListener('input', () => {isFocus.current = true; console.log("fOCUS ON ME 2");});
+    input.addEventListener('focus', () => {isFocus.current = true; console.log("fOCUS ON ME 3");}, true);
+    input.addEventListener('focusout', () => {isFocus.current = false});
+    }
+  })
 
   useEffect(() => {
     callbackRef.current = cb;
@@ -82,20 +92,20 @@ const useKey = (key, cb) => {
       }
     }
 
-    function handleKeyDown(event){
-      if(event.code === key){
-        //event.preventDefault();
-        keypresses++; 
-        console.log("Key presses:" + keypresses);
-        console.log("Key pressed: " + event.code);
-        callbackRef.current(event);
+  function handleKeyDown(event){
+    console.log(`isFocus ${isFocus.current}`);
+    if(event.code === key && isFocus.current == false ){
+      console.log(`handleKeyDown isFocus: ${isFocus.current}`)
+      //event.preventDefault();
+      console.log("Key pressed: " + event.code);
+      callbackRef.current(event);
       }
     }
 
-    document.addEventListener("keydown", (event) => {if(event.code === "Space"){event.preventDefault();}});
-    document.addEventListener("keydown", debounced(300, handleKeyDown));
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [key]);
+  document.addEventListener("keydown", (event) => {if(event.code === "Space"&& isFocus == false){event.preventDefault();}});
+  document.addEventListener("keydown", (debounced(300, handleKeyDown)));
+  return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [key]);
 }
 
 function App() {
@@ -114,8 +124,8 @@ function App() {
   const [hasEnded, setHasEnded] = useState(false);
   const [error, setError] = useState("");
   const [pBar, setPBar] = useState(0);
-  const handleClose = () => setShowNewNodeModal(false);
-  const handleShow = () => setShowNewNodeModal(true);
+  const handleClose = () => setShowNewNodeModal(false)
+  const handleShow = () => setShowNewNodeModal(true)
   const handleCloseNewOutputModal = () => setShowNewOutputModal(false);
   const handleShowNewOutputModal = () => setShowNewOutputModal(true);
   const handleCloseEditModal = () => setShowEditModal(false);
@@ -131,6 +141,7 @@ function App() {
     console.log("alert from simulationEnd");
     alert("Simulation has ended.");
   }
+
   const showError = (text) => {
     setError(text);
     setTimeout(() => {
@@ -289,7 +300,9 @@ function App() {
   }
   function handlePlay() {
     if (!hasEnded){
+      console.log(`isPlaying before ${isPlaying}`);
       setIsPlaying(p => !p);
+      console.log(`isPlaying after ${isPlaying}`);
     }else{
       alert("Simulation has ended.");
     }
