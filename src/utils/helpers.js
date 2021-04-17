@@ -23,7 +23,7 @@ export const createNeuron = (newId, x,
         data: {
             id: newId + '-spike',
             parent: newId,
-            spike: spike,
+            spike: `${(spike == 0) ? "λ" : spike}`,
             label: ''
         },
         position: { x: x, y: y - 50 },
