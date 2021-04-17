@@ -21,45 +21,6 @@ import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 import { original } from 'immer';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
-var originalNeurons = (window.localStorage.getItem('neurons') != null) ?  JSON.parse(window.localStorage.getItem('neurons')) : {
-  n1: {
-    id: "n1",
-    position: { x: 50, y: 50 },
-    rules: 'a+/a->a;2',
-    startingSpikes: 1,
-    delay: 0,
-    spikes: 1,
-    isOutput: false,
-    out: ['n2']
-  },
-  n2: {
-    id: "n2",
-    position: { x: 200, y: 50 },
-    rules: 'a/a->a;1',
-    startingSpikes: 0,
-    delay: 0,
-    spikes: 0,
-    isOutput: false,
-    out: ['n3']
-  },
-  n3: {
-    id: "n3",
-    position: { x: 400, y: 50 },
-    rules: 'a/a->a;0',
-    startingSpikes: 1,
-    delay: 0,
-    spikes: 1,
-    isOutput: false,
-    out: ["n4"]
-  },
-  n4: {
-    id: "n4",
-    position: { x: 400, y: 200 },
-    isOutput: true,
-    spikes: 0,
-    bitstring: ' '
-  }
-};
 
 function useKey(key, cb){
   const isFocus = useRef(false);
@@ -67,6 +28,7 @@ function useKey(key, cb){
 
   const inputs = document.getElementsByTagName('input');
 
+  // if user is typing in input elements, isFocus = true, and keybinds should not work
   useEffect( () => {for (let input of inputs) {
     input.addEventListener('focusin', () => {isFocus.current = true; console.log("fOCUS ON ME");});
     input.addEventListener('input', () => {isFocus.current = true; console.log("fOCUS ON ME 2");});
@@ -109,11 +71,49 @@ function useKey(key, cb){
 }
 
 function App() {
-  const [neurons, setNeurons] = useImmer(originalNeurons);
+  const [neurons, setNeurons] = useImmer((window.localStorage.getItem('originalNeurons')!= null) ? JSON.parse(window.localStorage.getItem('originalNeurons')) : {
+    n1: {
+      id: "n1",
+      position: { x: 50, y: 50 },
+      rules: 'a+/a->a;2',
+      startingSpikes: 1,
+      delay: 0,
+      spikes: 1,
+      isOutput: false,
+      out: ['n2']
+    },
+    n2: {
+      id: "n2",
+      position: { x: 200, y: 50 },
+      rules: 'a/a->a;1',
+      startingSpikes: 0,
+      delay: 0,
+      spikes: 0,
+      isOutput: false,
+      out: ['n3']
+    },
+    n3: {
+      id: "n3",
+      position: { x: 400, y: 50 },
+      rules: 'a/a->a;0',
+      startingSpikes: 1,
+      delay: 0,
+      spikes: 1,
+      isOutput: false,
+      out: ["n4"]
+    },
+    n4: {
+      id: "n4",
+      position: { x: 400, y: 200 },
+      isOutput: true,
+      spikes: 0,
+      bitstring: ' '
+    }
+  });
   const [time, setTime] = useState(0);
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
-  const [Prompt, setDirty, setPristine] = useUnsavedChanges(neurons);
+  const [Prompt, setDirty, setPristine] = useUnsavedChanges();
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showNewOutputModal, setShowNewOutputModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
@@ -228,7 +228,7 @@ function App() {
           }
         }
       })
-      originalNeurons = result.content;
+      window.localStorage.setItem('originalNeurons', result.content);
       setFileName(file.name);
     });
     reader.readAsText(file);
@@ -257,12 +257,15 @@ function App() {
       draft[newNeuron.id] = newNeuron;
     })
     setDirty(true);
+    window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
+
   }
   async function handleNewOutput(newOutput) {
     await setNeurons(draft => {
       draft[newOutput.id] = newOutput;
     });
     setDirty(true);
+    window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
   }
   async function handleEditNode(id, rules, spikes) {
     //console.log("handleEditNode")
@@ -272,8 +275,7 @@ function App() {
       draft[id].rules = rules;
     });
     setDirty(true);
-    originalNeurons = neurons; //for restart
-    //window.localStorage.setItem('neurons', JSON.stringify(neurons));
+    window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
   }
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
@@ -293,10 +295,8 @@ function App() {
       //delete neuron
       delete draft[neuronId];
     })
-    console.log(neurons);
-    originalNeurons = neurons;
     setDirty(true);
-    //window.localStorage.setItem('neurons', JSON.stringify(neurons));
+    window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
   }
   function handlePlay() {
     if (!hasEnded){
@@ -313,12 +313,15 @@ function App() {
     </Tooltip>
   );
   const handleReset = () => {
-    setNeurons(draft => draft = originalNeurons);
+    setNeurons(draft => draft = JSON.parse(window.localStorage.getItem('originalNeurons')));
     setTime(0);
     setIsPlaying(false);
     setHasEnded(false);
-    localStorage.clear();
+    var tempNeurons = window.localStorage.getItem('originalNeurons');
+    window.localStorage.clear();
+    window.localStorage.setItem('originalNeurons', tempNeurons);
   }
+
   const [guidedRules, setGuidedRules] = useState({});
   const handleStartGuidedMode = async (rules) => {
     await setGuidedRules(rules);
@@ -350,7 +353,8 @@ function App() {
     if (time == 0) {
       //copy
       console.log("Time is: " + time);
-      originalNeurons = JSON.parse(JSON.stringify(neurons));
+      window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
+      console.log("Original neurons on time = 1 ", window.localStorage.getItem('originalNeurons'));
     }
     if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
