@@ -37,7 +37,7 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
         }
       });
       cy.edgehandles({
-        handleNodes: '.snapse-node, .snapse-output',
+        handleNodes: '.snapse-node',
         preview: false,
         loopAllowed: () => false,
         edgeType: function (sourceNode, targetNode) {
