@@ -6,9 +6,11 @@ import reportWebVitals from './reportWebVitals';
 import cytoscape from 'cytoscape';
 import edgehandles from 'cytoscape-edgehandles';
 import gridGuide from 'cytoscape-grid-guide';
+import nodeHtmlLabel from 'cytoscape-node-html-label';
 
 cytoscape.use(edgehandles)
 cytoscape.use(gridGuide)
+cytoscape.use(nodeHtmlLabel)
 ReactDOM.render(
   <React.StrictMode>
     <App />

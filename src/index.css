@@ -1,3 +1,5 @@
+@import url('https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css');
+
 html {
   box-sizing: border-box;
 }
@@ -28,4 +30,11 @@ body,
 
 #root {
   display: flex;
+}
+
+.spike {
+  color: #2b2b2b;
+  font-family: 'Computer Modern Serif';
+  font-style: italic;
+  font-weight: bold;
 }

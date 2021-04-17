@@ -31,7 +31,35 @@ const styles = [
         }
     },
     {
-        selector: '.snapse-node__time, .snapse-node__spike',
+        selector: '.snapse-node__spike',
+        style: {
+            'font-family': 'Computer Modern',
+            'background-opacity': '0',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            content: 'data(label)',
+            events: 'no',
+            height: 15,
+            shape: 'roundrectangle',
+            width: 50
+        }
+    },
+    {
+        selector: '.snapse-node__time',
+        style: {
+            'font-family': 'Computer Modern',
+            'background-opacity': '0',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            content: 'data(label)',
+            events: 'no',
+            height: 15,
+            shape: 'roundrectangle',
+            width: 50
+        }
+    },
+    {
+        selector: '.snapse-node__bitstring',
         style: {
             'font-family': 'Computer Modern',
             'background-opacity': '0',

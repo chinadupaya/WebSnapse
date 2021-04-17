@@ -23,9 +23,10 @@ export const createNeuron = (newId, x,
         data: {
             id: newId + '-spike',
             parent: newId,
-            label: `${(spike==0)? "λ" : spike}`
+            spike: spike,
+            label: ''
         },
-        position: { x: x, y: y - 60 },
+        position: { x: x, y: y - 50 },
         classes: 'snapse-node__spike'
     },
     {
@@ -50,7 +51,7 @@ export const createOutputNeuron = (id,x,y,output,spike) => [
       },
       {
         data: { rootId: id, id: `${id}-spike`, parent: id, label: spike },
-        classes: 'snapse-node__spike',
+        classes: 'snapse-node__bitstring',
         position: { x, y: y + 40 }
       }
 ]

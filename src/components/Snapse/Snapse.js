@@ -36,6 +36,19 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
         initPosAlignmentColor: "#0000ff",
         }
       });
+
+      cy.nodeHtmlLabel([{
+        query: '.snapse-node__spike',
+        cssClass: 'spike',
+        halign: 'center',
+        valign: "center",
+        halignBox: "center",
+        valignBox: "center",
+            tpl: function (data) {
+                return '<p class="spike">a<sup>' + data.spike + '</sup></p>' 
+            }
+      }]);
+
       cy.edgehandles({
         handleNodes: '.snapse-node, .snapse-output',
         preview: false,

@@ -7,7 +7,6 @@ import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, Drop
 import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill, ClockHistory, PlusSquare, Save2 } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
-import shortid from 'shortid';
 import { step, backStep, parseRule } from "./utils/automata";
 import ChooseRuleForm from './components/forms/ChooseRuleForm';
 import NewNodeForm from './components/forms/NewNodeForm';
