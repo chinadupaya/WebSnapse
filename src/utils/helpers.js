@@ -14,7 +14,8 @@ export const createNeuron = (newId, x,
         data: {
             id: newId + '-rules',
             parent:newId,
-            label: rules.replace(/ /g, "\n")
+            rules: transformRules(rules),
+            label: ''//rules.replace(/ /g, "\n")
         },
         position: { x: x, y: y },
         classes: 'snapse-node__rules'
@@ -129,4 +130,104 @@ export const convertElements = elements =>{
         }
     }
     return array;
+}
+
+export const transformRules = (rules) => {
+    var splitRules = rules.split(" ");
+    console.log(splitRules);
+    var htmlString = '<p class="rules">';
+
+    for (var i=0; i<splitRules.length; i++){
+        //split the rule into the characters 
+        console.log('it enters');
+        var splitRule = splitRules[i].split('/').join(';').split('->').join(';').split(';')
+        //splitRule[0] = required spikes
+        var requiredSpikes = (splitRule[0].match(/a/g)|| []).length;
+        console.log('requiredSpikes', requiredSpikes);
+        if (requiredSpikes === 0){
+            temp = htmlString.concat(`a<sup>λ</sup>`);
+            htmlString = temp; 
+        }else if(requiredSpikes === 1){
+            temp = htmlString.concat('a');
+            htmlString = temp; 
+        }else{
+            temp = htmlString.concat(`a<sup>${requiredSpikes}</sup>`);
+            htmlString = temp; 
+        }
+
+        if ((splitRule[0].match(/\+/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>+</sup>');
+            htmlString = temp; 
+        }
+        else if((splitRule[0].match(/\*/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>*</sup>');
+            htmlString = temp; 
+        }
+
+        temp = htmlString.concat('/');
+        htmlString = temp;
+        //splitRule[1] = consumed spikes 
+        var consumedSpikes = (splitRule[1].match(/a/g)|| []).length;
+        var temp = "";
+        
+        if (consumedSpikes == 0){
+            temp = htmlString.concat(`a<sup>λ</sup>`);
+            htmlString = temp; 
+        }else if(consumedSpikes == 1){
+            temp = htmlString.concat('a');
+            htmlString = temp; 
+        }else{
+            temp = htmlString.concat(`a<sup>${consumedSpikes}</sup>`);
+            htmlString = temp; 
+        }
+
+        if ((splitRule[1].match(/\+/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>+</sup>');
+            htmlString = temp; 
+        }
+        else if((splitRule[1].match(/\*/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>*</sup>');
+            htmlString = temp; 
+        }
+
+        temp = htmlString.concat('→');
+        htmlString = temp; 
+        //splitRule[2] = sent spikes
+        var sentSpikes = (splitRule[2].match(/a/g)|| []).length;
+
+        if (sentSpikes == 0){
+            temp = htmlString.concat(`a<sup>λ</sup>`);
+            htmlString = temp; 
+        }else if(sentSpikes == 1){
+            temp = htmlString.concat('a');
+            htmlString = temp; 
+        }else{
+            temp = htmlString.concat(`a<sup>${sentSpikes}</sup>`);
+            htmlString = temp; 
+        }
+
+        if ((splitRule[2].match(/\+/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>+</sup>');
+            htmlString = temp; 
+        }
+        else if((splitRule[2].match(/\*/g)|| []).length > 0){
+            temp = htmlString.concat('<sup>*</sup>');
+            htmlString = temp; 
+        }
+
+        //splitRule[3] = delay;
+        temp = htmlString.concat(`;${splitRule[3]}`);
+        htmlString = temp; 
+
+        // check if last rule
+        if(i < (splitRules.length-1)){
+            temp = htmlString.concat('\n');
+            htmlString = temp;
+        }else{
+            temp = htmlString.concat('</p>');
+            htmlString = temp; 
+        }
+        console.log(htmlString);
+        return htmlString;
+    }
 }

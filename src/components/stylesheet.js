@@ -13,7 +13,25 @@ const styles = [
         }
     },
     {
-        selector: '.snapse-node__rules, .snapse-node__output',
+        selector: '.snapse-node__rules',
+        style: {
+            'font-family': 'Computer Modern',
+            'font-style':'italic',
+            'background-color': 'white',
+            'border-width': 1,
+            events: 'no',
+            'text-wrap': 'wrap',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            'text-wrap':'wrap',
+            content: 'data(label)',
+            height: 150,
+            shape: 'roundrectangle',
+            width: 100
+        }
+    },
+    {
+        selector: '.snapse-node__output',
         style: {
             'font-family': 'Computer Modern',
             'font-style':'italic',

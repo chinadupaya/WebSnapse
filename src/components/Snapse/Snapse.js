@@ -47,6 +47,17 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
             tpl: function (data) {
                 return '<p class="spike">a<sup>' + data.spike + '</sup></p>' 
             }
+      },
+      {
+        query: '.snapse-node__rules',
+        cssClass: 'rules',
+        halign: 'center',
+        valign: "center",
+        halignBox: "center",
+        valignBox: "center",
+            tpl: function (data) {
+                return data.rules 
+        }
       }]);
 
       cy.edgehandles({
