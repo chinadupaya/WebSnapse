@@ -228,7 +228,7 @@ function App() {
           }
         }
       })
-      window.localStorage.setItem('originalNeurons', result.content);
+      window.localStorage.setItem('originalNeurons', JSON.stringify(result.content));
       setFileName(file.name);
     });
     reader.readAsText(file);
