@@ -2,7 +2,7 @@ import { Table, Modal } from "react-bootstrap"
 import './ChoiceHistory.css';
 const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal}) =>{
     var getLatestState = JSON.parse(localStorage.getItem(time-1+"sec"));
-    var neuronIds = "There are no neurons";
+    var neuronIds = <td>There are no neurons</td>;
     if(getLatestState){
         neuronIds = Object.keys(getLatestState).map((neuron)=>(
             <th key={neuron}>{neuron}</th>)
@@ -25,8 +25,10 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
         neuronCells = []
     }
     return(
-        <Modal show={showChoiceHistoryModal} onHide={handleCloseHoiceHistoryModal} className="custom-choice-history-modal">
-                <Table striped bordered hover>
+        <Modal show={showChoiceHistoryModal} 
+        onHide={handleCloseHoiceHistoryModal} 
+        className="custom-choice-history-modal">
+                <Table striped bordered hover data-testid="choice-history-table">
                     <thead>
                         <tr>
                             <th>Time</th>

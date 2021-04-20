@@ -124,6 +124,7 @@ function App() {
   const [hasEnded, setHasEnded] = useState(false);
   const [error, setError] = useState("");
   const [pBar, setPBar] = useState(0);
+  const headless = process.env.NODE_ENV === 'test'
   const handleClose = () => setShowNewNodeModal(false)
   const handleShow = () => setShowNewNodeModal(true)
   const handleCloseNewOutputModal = () => setShowNewOutputModal(false);
@@ -242,8 +243,6 @@ function App() {
       outCopy.push(dst)
       draft[src].out = outCopy;
     })
-
-
   }
   const handleNewPosition = async (position, id) => {
     setNeurons(draft => {
@@ -520,7 +519,8 @@ function App() {
                 onEdgeCreate(src.id(), dst.id())
                 addedEles.remove();
               }}
-              handleChangePosition={handleNewPosition} />
+              handleChangePosition={handleNewPosition}
+              headless={headless} />
             <ChoiceHistory time={time}
             showChoiceHistoryModal={showChoiceHistoryModal}
             handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal} />

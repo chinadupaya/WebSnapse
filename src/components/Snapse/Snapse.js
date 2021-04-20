@@ -7,7 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { convertElements } from '../../utils/helpers';
 import {AlignCenter} from 'react-bootstrap-icons';
 
-const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
+const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
   const [cyRef, setCy] = useAnimateEdges()
   function handleCenterGraph(){
     const cy = cyRef.current;
@@ -22,7 +22,8 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
   }
   const elements = convertElements(neurons);
   useEffect(()=>{
-    const cy = cyRef.current
+    if(headless){
+      const cy = cyRef.current
     if(cy){
       cy.on('mouseup','.snapse-node, .snapse-output',(evt)=>{
         console.log("change position", evt.target.id())
@@ -48,8 +49,10 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition }) => {
       });
 
     }
-  },[cyRef]);
-  return (
+    }
+    
+  },[cyRef, headless]);
+  return headless ? (<div id="cyHeadless"></div>): (
     <div style={{
       width: "100%",
       height: "100%"
