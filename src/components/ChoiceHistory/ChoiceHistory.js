@@ -21,7 +21,7 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
                 neuronCells.push(TableCell("No chosen rule"));
             }
         }
-        neuronRows.push(TableRow(neuronCells));
+        neuronRows.push(TableRow(neuronCells, i));
         neuronCells = []
     }
     return(
@@ -51,9 +51,9 @@ const TableCell = (content) =>{
     )
 };
 
-const TableRow = (content)=>{
+const TableRow = (content,i)=>{
     return (
-        <tr>
+        <tr key={"time-"+i}>
             {content}
         </tr>
     )

@@ -22,10 +22,8 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
   }
   const elements = convertElements(neurons);
   useEffect(() => {
-    /* if (headless) {
-      
-    } */
-    const cy = cyRef.current
+    if (!headless) {
+      const cy = cyRef.current
       if (cy) {
         cy.on('mouseup', '.snapse-node, .snapse-output', (evt) => {
           console.log("change position", evt.target.id())
@@ -49,9 +47,9 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
           },
           complete: onEdgeCreate
         });
-
       }
-
+    }
+    
   }, [cyRef, headless]);
   return headless ? (<div id="cyHeadless"></div>) : (
     <div style={{
