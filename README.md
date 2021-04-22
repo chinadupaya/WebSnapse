@@ -20,6 +20,11 @@ You will also see any lint errors in the console.
 
 ### `yarn test`
 
+[React testing
+library](https://testing-library.com/docs/react-testing-library/intro/) is being
+used for the correctness of the system. It also serves as secondary
+documentation on the features of WebSnapse
+
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
