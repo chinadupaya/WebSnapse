@@ -3,7 +3,7 @@ import { fireEvent, render, screen, getByText } from '@testing-library/react';
 import NewNodeForm from '../NewNodeForm';
 
 test('renders new node form', async () =>{
-    const {queryByTestId} = render(<NewNodeForm  />);
+    const {queryByTestId} = render(<NewNodeForm showNewNodeModal={true}/>);
     //renderform
     expect(queryByTestId('new-node-form')).toBeInTheDocument
 });

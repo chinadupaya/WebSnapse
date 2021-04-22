@@ -7,25 +7,17 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
     const handleClose = () => {
         handleCloseDeleteModal();
     };
-
-    //console.log("it's here", neurons);
-    //console.log("neuron[0]",Object.keys(neurons));
-    
     let neuronOptions = Object.keys(neurons).map((neuron)=>(
         <option value={neuron} key={neuron}>{neuron}</option>)
     )
 
     let defaultNeuron = Object.keys(neurons)[0];
-    //console.log("defaultNeuron", defaultNeuron);
-
     function handleSelectChange(event){
-        //console.log("Event.target.value", event.target.value)
         setNeuronId(event.target.value);
     }
     function handleSubmit(event) {
         console.log("NeuronId", neuronId);
         event.preventDefault();
-        //console.log(neurons);
         if(neuronId!==''){
             
             handleClose();
@@ -39,8 +31,6 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
                     setNeuronId('');
                 }, 3000);
                 handleDeleteNode(defaultNeuron);
-            //handleError(`Please input a neuron id ${neuronId} none`);
-            //handleClose();
         }
     }
 
