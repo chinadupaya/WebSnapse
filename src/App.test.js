@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, getByText } from '@testing-library/react';
 import App from './App';
 
 it('renders welcome message', () => {

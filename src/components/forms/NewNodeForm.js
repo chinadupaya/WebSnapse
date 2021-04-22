@@ -26,8 +26,6 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
   const [formData, setFormData] = useReducer(formReducer, initialFormState);
   const [submitting, setSubmitting] = useState(false);
   const handleChange = event => {
-    console.log(event.target.value);
-    console.log(event.target.name);
     setFormData({
       name: event.target.name,
       value: event.target.value,
@@ -72,26 +70,26 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
         <Modal.Title>Create New Node</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} data-testid="new-node-form">
         <Form.Group>
-            <Form.Label>Node Name</Form.Label>
-            <Form.Control  required name="id" type="text" placeholder="n0" value={formData.id} onChange={handleChange} />
+            <Form.Label htmlFor="node-name">Node Name</Form.Label>
+            <Form.Control required id="node-name" name="id" type="text" placeholder="n0" value={formData.id} onChange={handleChange} />
           </Form.Group>
           <Form.Group>
-            <Form.Label>Node Rules</Form.Label>
-            <Form.Control required name="rules" type="text" placeholder="a/a->a;0 aa/a->a;1" value={formData.rules} onChange={handleChange} />
+            <Form.Label htmlFor="node-rules">Node Rules</Form.Label>
+            <Form.Control id="node-rules" required name="rules" type="text" placeholder="a/a->a;0 aa/a->a;1" value={formData.rules} onChange={handleChange} />
             <Form.Text className="text-muted">
               Enter valid rules only. Separate each rule with a space.
               </Form.Text>
           </Form.Group>
           <Form.Group>
-            <Form.Label>Starting Spike Number</Form.Label>
-            <Form.Control required name="startingSpikes" type="number" value={formData.startingSpikes} onChange={handleChange} />
+            <Form.Label htmlFor="starting-spikes">Starting Spike Number</Form.Label>
+            <Form.Control id="starting-spikes" required name="startingSpikes" type="number" value={formData.startingSpikes} onChange={handleChange} />
           </Form.Group>
           <Button variant="secondary" onClick={handleClose}>
             Close
             </Button> {' '}
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" data-testid="new-node-submit-button">
             Save Changes
             </Button>
         </Form>
