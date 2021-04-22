@@ -14,7 +14,6 @@ const neurons = {
     }
 }
 test('renders edit node form', async () =>{
-    
     const { queryByTestId } = render(<EditNodeForm showEditModal={true} neurons={neurons}/>);
     //renderform
     expect(queryByTestId('edit-node-form')).toBeInTheDocument

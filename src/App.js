@@ -3,7 +3,7 @@ import './App.css';
 import { slide as Menu } from 'react-burger-menu'
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
-import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
+import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, Dropdown, DropdownButton } from 'react-bootstrap';
 import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill, ClockHistory, PlusSquare, Save2 } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
@@ -22,25 +22,26 @@ import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges'
 import { original } from 'immer';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
 
-function useKey(key, cb){
+function useKey(key, cb) {
   const isFocus = useRef(false);
   const callbackRef = useRef(cb);
 
   const inputs = document.getElementsByTagName('input');
 
   // if user is typing in input elements, isFocus = true, and keybinds should not work
-  useEffect( () => {for (let input of inputs) {
-    input.addEventListener('focusin', () => {isFocus.current = true; console.log("fOCUS ON ME");});
-    input.addEventListener('input', () => {isFocus.current = true; console.log("fOCUS ON ME 2");});
-    input.addEventListener('focus', () => {isFocus.current = true; console.log("fOCUS ON ME 3");}, true);
-    input.addEventListener('focusout', () => {isFocus.current = false});
+  useEffect(() => {
+    for (let input of inputs) {
+      input.addEventListener('focusin', () => { isFocus.current = true; console.log("fOCUS ON ME"); });
+      input.addEventListener('input', () => { isFocus.current = true; console.log("fOCUS ON ME 2"); });
+      input.addEventListener('focus', () => { isFocus.current = true; console.log("fOCUS ON ME 3"); }, true);
+      input.addEventListener('focusout', () => { isFocus.current = false });
     }
   })
 
   useEffect(() => {
     callbackRef.current = cb;
   });
-  useEffect(()=> {
+  useEffect(() => {
     function debounced(delay, fn) {
       let timerId;
       return function (...args) {
@@ -54,24 +55,24 @@ function useKey(key, cb){
       }
     }
 
-  function handleKeyDown(event){
-    console.log(`isFocus ${isFocus.current}`);
-    if(event.code === key && isFocus.current == false ){
-      console.log(`handleKeyDown isFocus: ${isFocus.current}`)
-      //event.preventDefault();
-      console.log("Key pressed: " + event.code);
-      callbackRef.current(event);
+    function handleKeyDown(event) {
+      console.log(`isFocus ${isFocus.current}`);
+      if (event.code === key && isFocus.current == false) {
+        console.log(`handleKeyDown isFocus: ${isFocus.current}`)
+        //event.preventDefault();
+        console.log("Key pressed: " + event.code);
+        callbackRef.current(event);
       }
     }
 
-  document.addEventListener("keydown", (event) => {if(event.code === "Space"&& isFocus == false){event.preventDefault();}});
-  document.addEventListener("keydown", (debounced(300, handleKeyDown)));
-  return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [key]);
+    document.addEventListener("keydown", (event) => { if (event.code === "Space" && isFocus == false) { event.preventDefault(); } });
+    document.addEventListener("keydown", (debounced(300, handleKeyDown)));
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [key]);
 }
 
 function App() {
-  const [neurons, setNeurons] = useImmer((window.localStorage.getItem('originalNeurons')!= null) ? JSON.parse(window.localStorage.getItem('originalNeurons')) : {
+  const [neurons, setNeurons] = useImmer((window.localStorage.getItem('originalNeurons') != null) ? JSON.parse(window.localStorage.getItem('originalNeurons')) : {
     n1: {
       id: "n1",
       position: { x: 50, y: 50 },
@@ -219,7 +220,7 @@ function App() {
         textFn: removeJsonTextAttribute
       };
       var result = await convert.xml2js(event.target.result, options);
-      console.log("Result.content"); 
+      console.log("Result.content");
       await setNeurons(draft => draft = result.content);
       await setNeurons(draft => {
         for (var k in draft) {
@@ -298,11 +299,11 @@ function App() {
     window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
   }
   function handlePlay() {
-    if (!hasEnded){
+    if (!hasEnded) {
       console.log(`isPlaying before ${isPlaying}`);
       setIsPlaying(p => !p);
       console.log(`isPlaying after ${isPlaying}`);
-    }else{
+    } else {
       alert("Simulation has ended.");
     }
   }
@@ -358,9 +359,9 @@ function App() {
     if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
       setTime(time => time + 1);
-    }else{
+    } else {
       alert("Simulation has ended.");
-    } 
+    }
   }
   const onBackward = async () => {
     if (time > 1) {
@@ -397,28 +398,28 @@ function App() {
     }
   }, [])
 
-    // Key Bindings 
-    function handleSpace(){
-      console.log("Space Pressed");
-      setIsPlaying(p => !p);
+  // Key Bindings 
+  function handleSpace() {
+    console.log("Space Pressed");
+    setIsPlaying(p => !p);
+  }
+
+  function handleRightKey() {
+    console.log("Right Key Pressed");
+    if (!hasEnded) {
+      onIntervalStepRef.current();
     }
-  
-    function handleRightKey(){
-      console.log("Right Key Pressed");
-      if(!hasEnded){
-        onIntervalStepRef.current();
-      }
-    }
-  
-    function handleLeftKey(){
-      console.log("Left Key Pressed");
-      onBackward();
-    }
-  
-    useKey("Space", handleSpace);
-    useKey("ArrowLeft", handleLeftKey);
-    useKey("ArrowRight", handleRightKey);
-  
+  }
+
+  function handleLeftKey() {
+    console.log("Left Key Pressed");
+    onBackward();
+  }
+
+  useKey("Space", handleSpace);
+  useKey("ArrowLeft", handleLeftKey);
+  useKey("ArrowRight", handleRightKey);
+
 
   return (
     <Router>
@@ -429,7 +430,7 @@ function App() {
               {error}
             </Alert>}
             <Menu>
-              
+
               <Form>
                 <Form.File
                   id="custom-file"
@@ -439,78 +440,87 @@ function App() {
                 />
               </Form>
               <div>
-                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}><Save2/>{' '}Save</Button>
+                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}><Save2 />{' '}Save</Button>
               </div>
               <div>
-                <Button variant="primary" onClick={handleShowChoiceHistoryModal}><ClockHistory/>{' '}Choice History</Button>
+                <Button variant="primary" onClick={handleShowChoiceHistoryModal}><ClockHistory />{' '}Choice History</Button>
+              </div>
+              <div>
+                <DropdownButton id="file-dropdown" title="Download samples">
+                  <Dropdown.Item href="./samples/3k+3 spiker.xmp" download>3k+3 Spiker</Dropdown.Item>
+                  <Dropdown.Item href="./samples/bitadder.xmp" download>Bitadder</Dropdown.Item>
+                  <Dropdown.Item href="./samples/increasing comparator.xmp" download>Increasing Comparator</Dropdown.Item>
+                  <Dropdown.Item href="./samples/naturally even.xmp" download>Naturally Even</Dropdown.Item>
+                  <Dropdown.Item href="./samples/naturally greater one.xmp" download>Naturally Greater One</Dropdown.Item>
+                </DropdownButton>
               </div>
             </Menu>
             <div>
-            <div style={{ textAlign: "center" }}>
-              <h1 style={{ fontWeight: "700"}} className="text-primary">WebSnapse</h1>
-            </div>
-            <Row>
-              <Col>
-                <div>
-                  
-                  <Form>
-                    <Form.Group id="formGridCheckbox">
-                      <Row>
-                        <Col sm={6}>
-                          <Form.Check type="checkbox"
-                            label="Pseudorandom"
-                            defaultChecked={isRandom}
-                            onChange={() => {
-                              setIsRandom(!isRandom)
-                            }} />
-                        </Col>
-
-                        <Col sm={1} style={{ textAlign: "left" }}>
-                          <OverlayTrigger
-                            placement="right"
-                            delay={{ show: 250, hide: 400 }}
-                            overlay={renderTooltip}
-                          >
-                            <QuestionCircle />
-                          </OverlayTrigger>
-                        </Col>
-                      </Row>
-                    </Form.Group>
-                  </Form>
-                  { time == 0 ? <div></div> : 
-                    <div style={{backgroundColor:"#778beb", color:"white", borderRadius:"10px", padding:"0.5em"}}>
-                      <ClockFill color="white" size={30}/> <strong>Time:</strong> {time == 0 ? "Start playing!" : time}
-                    </div>
-                  }
-                  
-                </div>
-              </Col>
-              <Col>
-              <div className="snapse-controls" style={{ textAlign: "center", marginBottom:"0.8em" }}>
-                <Button variant="link" onClick={onBackward}><SkipBackwardFill /></Button>{' '}
-                <div style={{ display: 'inline-block' }}>
-                  <ProgressBar key={pBar} isPlaying={isPlaying} />
-                  <Button size="lg" className="snapse-controls-play" onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
-                </div> {' '}
-                <Button variant="link" onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
-
+              <div style={{ textAlign: "center" }}>
+                <h1 style={{ fontWeight: "700" }} className="text-primary">WebSnapse</h1>
               </div>
-              <div style={{textAlign:"center"}}>
-              <Dropdown>
-              <Dropdown.Toggle id="dropdown-basic">
-                <PlusSquare/>{' '}Node Actions
+              <Row>
+                <Col>
+                  <div>
+
+                    <Form>
+                      <Form.Group id="formGridCheckbox">
+                        <Row>
+                          <Col sm={6}>
+                            <Form.Check type="checkbox"
+                              label="Pseudorandom"
+                              defaultChecked={isRandom}
+                              onChange={() => {
+                                setIsRandom(!isRandom)
+                              }} />
+                          </Col>
+
+                          <Col sm={1} style={{ textAlign: "left" }}>
+                            <OverlayTrigger
+                              placement="right"
+                              delay={{ show: 250, hide: 400 }}
+                              overlay={renderTooltip}
+                            >
+                              <QuestionCircle />
+                            </OverlayTrigger>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                    </Form>
+                    {time == 0 ? <div></div> :
+                      <div style={{ backgroundColor: "#778beb", color: "white", borderRadius: "10px", padding: "0.5em" }}>
+                        <ClockFill color="white" size={30} /> <strong>Time:</strong> {time == 0 ? "Start playing!" : time}
+                      </div>
+                    }
+
+                  </div>
+                </Col>
+                <Col>
+                  <div className="snapse-controls" style={{ textAlign: "center", marginBottom: "0.8em" }}>
+                    <Button variant="link" onClick={onBackward}><SkipBackwardFill /></Button>{' '}
+                    <div style={{ display: 'inline-block' }}>
+                      <ProgressBar key={pBar} isPlaying={isPlaying} />
+                      <Button size="lg" className="snapse-controls-play" onClick={handlePlay}>{isPlaying ? <PauseFill /> : <PlayFill />}</Button>
+                    </div> {' '}
+                    <Button variant="link" onClick={() => onForward()}><SkipForwardFill /></Button>{' '}
+
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <Dropdown>
+                      <Dropdown.Toggle id="dropdown-basic">
+                        <PlusSquare />{' '}Node Actions
               </Dropdown.Toggle>
-              <Dropdown.Menu>
-              <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
-                <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
-              </Dropdown.Menu>
-              </Dropdown>
-              </div>
-              </Col>
-              <Col style={{textAlign:"right"}}><Button variant="danger" onClick={handleReset}>Restart</Button>{' '}</Col>
-            </Row>
+                      <Dropdown.Menu>
+                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
+                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
+                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
+                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </div>
+                </Col>
+                <Col style={{ textAlign: "right" }}><Button variant="danger" onClick={handleReset}>Restart</Button>{' '}</Col>
+              </Row>
             </div>
             <hr />
             <Snapse
@@ -522,8 +532,8 @@ function App() {
               handleChangePosition={handleNewPosition}
               headless={headless} />
             <ChoiceHistory time={time}
-            showChoiceHistoryModal={showChoiceHistoryModal}
-            handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal} />
+              showChoiceHistoryModal={showChoiceHistoryModal}
+              handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal} />
             <NewNodeForm showNewNodeModal={showNewNodeModal}
               handleCloseModal={handleClose}
               handleNewNode={handleNewNode}
