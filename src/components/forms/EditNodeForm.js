@@ -82,7 +82,7 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
                     </Form.Group>
                     <Form.Group>
                         <Form.Label htmlFor="startingSpikes">Starting Spike Number</Form.Label>
-                        <Form.Control id="startingSpikes" required name="startingSpikes" type="number" placeholder="0" value={startingSpikes} onChange={(event) => setStartingSpikes(event.target.value)} />
+                        <Form.Control id="startingSpikes" required name="startingSpikes" type="number" min="0" placeholder="0" value={startingSpikes} onChange={(event) => setStartingSpikes(event.target.value)} />
                     </Form.Group>
                     <Button variant="secondary" onClick={handleClose}>
                         Close

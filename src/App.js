@@ -220,13 +220,16 @@ function App() {
         textFn: removeJsonTextAttribute
       };
       var result = await convert.xml2js(event.target.result, options);
-      console.log("Result.content");
+      console.log(result.content);
       await setNeurons(draft => draft = result.content);
       await setNeurons(draft => {
         for (var k in draft) {
           if (draft[k].bitstring) {
             console.log(draft[k].bitstring);
             draft[k].bitstring = " ";
+          }
+          if(draft[k].out){
+            console.log(k, typeof draft[k].out, draft[k].out);
           }
         }
       })
