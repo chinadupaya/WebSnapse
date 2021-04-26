@@ -185,7 +185,6 @@ function App() {
     }
     var removeJsonTextAttribute = async function (value, parentElement) {
       try {
-        const parentOfParent = parentElement._parent;
         const pOpKeys = Object.keys(parentElement._parent);
         const keyNo = pOpKeys.length;
         const keyName = pOpKeys[keyNo - 1];
@@ -220,7 +219,6 @@ function App() {
         textFn: removeJsonTextAttribute
       };
       var result = await convert.xml2js(event.target.result, options);
-      console.log(result.content);
       await setNeurons(draft => draft = result.content);
       await setNeurons(draft => {
         for (var k in draft) {
@@ -283,12 +281,12 @@ function App() {
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
     await setNeurons(draft => {
-      //first delete edges connected to neuron
+      
       for (var k in draft) {
+        //first delete edges connected to neuron
         var neuron = draft[k];
-
-        if (!neuron.isOutput) {
-          const neuronOutKeys = neuron.out;
+        if (!neuron.isOutput && neuron.out) {
+          //const neuronOutKeys = neuron.out;
           let arr = neuron.out.filter(function (item) {
             return item !== neuronId
           });
@@ -328,8 +326,6 @@ function App() {
   const [guidedRules, setGuidedRules] = useState({});
   const handleStartGuidedMode = async (rules) => {
     await setGuidedRules(rules);
-
-    console.log(rules);
     setShowChooseRuleModal(true);
     if (setShowChooseRuleModal) {
       setIsPlaying(false); //pauses the graph playing while choosing rule
