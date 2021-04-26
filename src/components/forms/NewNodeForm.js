@@ -84,7 +84,7 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
           </Form.Group>
           <Form.Group>
             <Form.Label htmlFor="starting-spikes">Starting Spike Number</Form.Label>
-            <Form.Control id="starting-spikes" required name="startingSpikes" type="number" value={formData.startingSpikes} onChange={handleChange} />
+            <Form.Control id="starting-spikes" required name="startingSpikes" type="number" min="0" value={formData.startingSpikes} onChange={handleChange} />
           </Form.Group>
           <Button variant="secondary" onClick={handleClose}>
             Close
