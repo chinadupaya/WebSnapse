@@ -226,8 +226,8 @@ function App() {
             console.log(draft[k].bitstring);
             draft[k].bitstring = " ";
           }
-          if(draft[k].out){
-            console.log(k, typeof draft[k].out, draft[k].out);
+          if(!draft[k].isOutput && !draft[k].out){
+            draft[k].out = [];
           }
         }
       })
