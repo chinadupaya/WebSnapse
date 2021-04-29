@@ -165,7 +165,6 @@ function App() {
     setHasEnded(false);
 
     if (file.type && file.type.indexOf('text/xml') === -1) {
-
       showError("File is not a xml file");
       return;
     }
@@ -218,21 +217,27 @@ function App() {
         ignoreDoctype: true,
         textFn: removeJsonTextAttribute
       };
-      var result = await convert.xml2js(event.target.result, options);
-      await setNeurons(draft => draft = result.content);
-      await setNeurons(draft => {
-        for (var k in draft) {
-          if (draft[k].bitstring) {
-            console.log(draft[k].bitstring);
-            draft[k].bitstring = " ";
+      
+      try {
+        var result = await convert.xml2js(event.target.result, options);
+        await setNeurons(draft => draft = result.content);
+        await setNeurons(draft => {
+          for (var k in draft) {
+            if (draft[k].bitstring) {
+              console.log(draft[k].bitstring);
+              draft[k].bitstring = " ";
+            }
+            if (!draft[k].isOutput && !draft[k].out) {
+              draft[k].out = [];
+            }
           }
-          if(!draft[k].isOutput && !draft[k].out){
-            draft[k].out = [];
-          }
-        }
-      })
-      window.localStorage.setItem('originalNeurons', JSON.stringify(result.content));
-      setFileName(file.name);
+        })
+        window.localStorage.setItem('originalNeurons', JSON.stringify(result.content));
+        setFileName(file.name);
+      }catch{
+        showError("Unable to upload file. Please check for errors in the XML file.");
+      }
+      
     });
     reader.readAsText(file);
     setTime(0);
@@ -240,11 +245,21 @@ function App() {
 
   const onEdgeCreate = async (src, dst) => {
     console.log("newEdge", src, dst);
-    await setNeurons(draft => {
-      var outCopy = [...draft[src].out];
-      outCopy.push(dst)
-      draft[src].out = outCopy;
-    })
+    try {
+      await setNeurons(draft => {
+        if(typeof(draft[src].out)==='object'){
+          draft[src].out = [dst];
+        }else{  
+          var outCopy = [...draft[src].out];
+          outCopy.push(dst)
+          draft[src].out = outCopy;
+        }
+        
+      });
+    } catch {
+      showError("Something's wrong with your system. Please check for errors.");
+    }
+
   }
   const handleNewPosition = async (position, id) => {
     setNeurons(draft => {
@@ -281,11 +296,11 @@ function App() {
   async function handleDeleteNode(neuronId) {
     console.log("handleDeleteNode", neuronId);
     await setNeurons(draft => {
-      
+
       for (var k in draft) {
         //first delete edges connected to neuron
         var neuron = draft[k];
-        if (!neuron.isOutput && neuron.out) {
+        if (!neuron.isOutput && neuron.out.length > 1) {
           //const neuronOutKeys = neuron.out;
           let arr = neuron.out.filter(function (item) {
             return item !== neuronId
@@ -524,6 +539,7 @@ function App() {
             <hr />
             <Snapse
               neurons={neurons}
+              showError={showError}
               onEdgeCreate={(src, dst, addedEles) => {
                 onEdgeCreate(src.id(), dst.id())
                 addedEles.remove();

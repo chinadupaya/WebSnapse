@@ -7,7 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { convertElements } from '../../utils/helpers';
 import { AlignCenter } from 'react-bootstrap-icons';
 
-const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
+const Snapse = ({ neurons, showError,onEdgeCreate, handleChangePosition, headless }) => {
   const [cyRef, setCy] = useAnimateEdges()
   function handleCenterGraph() {
     const cy = cyRef.current;
@@ -20,6 +20,17 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
       });
     }
   }
+  const checkError = (neurons) =>{
+    console.log("checking for errors");
+    const elements = convertElements(neurons);
+    try{
+      return CytoscapeComponent.normalizeElements(elements);
+    }catch{
+      showError("ajsdlfajs")
+      return [];
+    }
+  }
+  
   const elements = convertElements(neurons);
   useEffect(() => {
     if (!headless) {
@@ -51,6 +62,7 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
     }
     
   }, [cyRef, headless]);
+  
   return headless ? (<div id="cyHeadless"></div>) : (
     <div style={{
       width: "100%",
@@ -59,7 +71,7 @@ const Snapse = ({ neurons, onEdgeCreate, handleChangePosition, headless }) => {
       <Button className="center-graph-button" variant="secondary" onClick={handleCenterGraph}><AlignCenter />{' '}Center Graph</Button>
       <CytoscapeComponent
         cy={setCy}
-        elements={CytoscapeComponent.normalizeElements(elements)}
+        elements={checkError(neurons)}
         style={{
           width: "100%",
           height: "100%"

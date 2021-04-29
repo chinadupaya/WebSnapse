@@ -115,7 +115,7 @@ export function step(neurons, time, isRandom, handleStartGuidedMode, handleSimul
                     newSpikes -= consumes;
                     draft[neuron.id].spikes = newSpikes;
                     //send spikes
-                    if (neuron.out) {
+                    if (neuron.out.length > 1) {
                         const neuronOutKeys = neuron.out;
                         for (let k of neuronOutKeys) {
                             spikeAdds[k] =
