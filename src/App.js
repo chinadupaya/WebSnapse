@@ -20,6 +20,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { saveAs } from 'file-saver';
 import useUnsavedChanges from './components/useUnsavedChanges/useUnsavedChanges';
 import { original } from 'immer';
+import Tour from './components/Tour/Tour';
 var options = { compact: true, ignoreComment: true, spaces: 4, sanitize: false };
 
 function useKey(key, cb) {
@@ -115,12 +116,17 @@ function App() {
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
   const [Prompt, setDirty, setPristine] = useUnsavedChanges();
+  // Modal Booleans
   const [showNewNodeModal, setShowNewNodeModal] = useState(false);
   const [showNewOutputModal, setShowNewOutputModal] = useState(false);
   const [showChooseRuleModal, setShowChooseRuleModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showChoiceHistoryModal, setShowChoiceHistoryModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // Menu Booleans 
+  const [showDropdownBasic, setShowDropdownBasic] = useState(false);
+  const [showSideBarMenu, setShowSideBarMenu] = useState(false);
+  // Simulation Booleans
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
   const [error, setError] = useState("");
@@ -137,6 +143,18 @@ function App() {
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
   const handleShowChoiceHistoryModal = () => setShowChoiceHistoryModal(true);
   const handleCloseHoiceHistoryModal = () => setShowChoiceHistoryModal(false);
+  // Menu Handles
+  const handleShowDropdownBasic = () => setShowDropdownBasic(true);
+  const handleCloseDropdownBasic = () => setShowDropdownBasic(false);
+  const handleDropDownBasic = () => {setShowDropdownBasic(showDropdownBasic ? false:true)};
+  const handleShowSideBarMenu = () => setShowSideBarMenu(true);
+  const handleCloseSideBarMenu = () => setShowSideBarMenu(false);
+  const handleSideBarMenu = () => {setShowSideBarMenu(showSideBarMenu ? false:true)};
+
+  const [restartTutorial, setRestartTutorial] = useState(false);
+  const handleTrueRestartTutorial = () => setRestartTutorial(true);
+  const handleFalseRestartTutorial = () => setRestartTutorial(false);
+
   const handleSimulationEnd = () => {
     setHasEnded(true);
     setIsPlaying(false);
@@ -419,16 +437,19 @@ function App() {
   useKey("ArrowLeft", handleLeftKey);
   useKey("ArrowRight", handleRightKey);
 
+ 
+
 
   return (
     <Router>
+      <Tour handleShowDropdownBasic={handleShowDropdownBasic} handleCloseDropdownBasic={handleCloseDropdownBasic} handleShowSideBarMenu={handleShowSideBarMenu} handleCloseSideBarMenu={handleCloseSideBarMenu} restartTutorial={restartTutorial} handleFalseRestartTutorial={handleFalseRestartTutorial}/> 
       <Switch>
         <Route path="/">
           <Container>
             {error && <Alert variant="danger">
               {error}
             </Alert>}
-            <Menu>
+            <Menu id="side-bar-menu" isOpen={showSideBarMenu} onClick={handleSideBarMenu} disableCloseOnEsc disableOverlayClick noOverlay>
 
               <Form>
                 <Form.File
@@ -439,10 +460,10 @@ function App() {
                 />
               </Form>
               <div>
-                <Button variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}><Save2 />{' '}Save</Button>
+                <Button id="save-btn" variant="primary" disabled={time > 0 ? true : false} onClick={handleSave}><Save2 />{' '}Save</Button>
               </div>
               <div>
-                <Button variant="primary" onClick={handleShowChoiceHistoryModal}><ClockHistory />{' '}Choice History</Button>
+                <Button id="choice-history-btn" variant="primary" onClick={handleShowChoiceHistoryModal}><ClockHistory />{' '}Choice History</Button>
               </div>
               <div>
                 <DropdownButton id="file-dropdown" title="Download samples">
@@ -453,10 +474,13 @@ function App() {
                   <Dropdown.Item href="./samples/naturally greater one.xmp" download>Naturally Greater One</Dropdown.Item>
                 </DropdownButton>
               </div>
+              <div>
+                <Button id="restart-tour" variant="primary" onClick={handleTrueRestartTutorial}>Restart Tutorial</Button>
+              </div>
             </Menu>
             <div>
               <div style={{ textAlign: "center" }}>
-                <h1 style={{ fontWeight: "700" }} className="text-primary">WebSnapse</h1>
+                <h1 style={{ fontWeight: "700" }} className="websnapse-title">WebSnapse</h1>
               </div>
               <Row>
                 <Col>
@@ -505,15 +529,15 @@ function App() {
 
                   </div>
                   <div style={{ textAlign: "center" }}>
-                    <Dropdown>
+                    <Dropdown show={showDropdownBasic} onClick={handleDropDownBasic}>
                       <Dropdown.Toggle id="dropdown-basic">
                         <PlusSquare />{' '}Node Actions
-              </Dropdown.Toggle>
+                    </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
-                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
-                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
-                        <Dropdown.Item><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
+                        <Dropdown.Item id="new-node-btn"><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShow} disabled={time > 0 ? true : false}>New Node</Button></Dropdown.Item>
+                        <Dropdown.Item id="new-output-btn"><Button variant="link" size="sm" className="node-actions text-primary" onClick={handleShowNewOutputModal} disabled={time > 0 ? true : false}>New Output Node</Button></Dropdown.Item>
+                        <Dropdown.Item id="edit-node-btn"><Button variant="link" size="sm" className="node-actions text-info" onClick={handleShowEditModal} disabled={time > 0 ? true : false}>Edit</Button></Dropdown.Item>
+                        <Dropdown.Item id="del-node-btn"><Button variant="link" size="sm" className="node-actions text-danger" onClick={handleShowDeleteModal} disabled={time > 0 ? true : false}>Delete</Button></Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>
