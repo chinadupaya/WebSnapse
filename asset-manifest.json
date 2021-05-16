@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/WebSnapse/static/css/main.62f3ab2d.chunk.css",
-    "main.js": "/WebSnapse/static/js/main.3661810b.chunk.js",
-    "main.js.map": "/WebSnapse/static/js/main.3661810b.chunk.js.map",
+    "main.js": "/WebSnapse/static/js/main.e11cd106.chunk.js",
+    "main.js.map": "/WebSnapse/static/js/main.e11cd106.chunk.js.map",
     "runtime-main.js": "/WebSnapse/static/js/runtime-main.b99885aa.js",
     "runtime-main.js.map": "/WebSnapse/static/js/runtime-main.b99885aa.js.map",
     "static/js/2.823923a9.chunk.js": "/WebSnapse/static/js/2.823923a9.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.b99885aa.js",
     "static/js/2.823923a9.chunk.js",
     "static/css/main.62f3ab2d.chunk.css",
-    "static/js/main.3661810b.chunk.js"
+    "static/js/main.e11cd106.chunk.js"
   ]
 }
