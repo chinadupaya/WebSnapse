@@ -332,13 +332,15 @@ function App() {
     </Tooltip>
   );
   const handleReset = () => {
-    setNeurons(draft => draft = JSON.parse(window.localStorage.getItem('originalNeurons')));
-    setTime(0);
-    setIsPlaying(false);
-    setHasEnded(false);
-    var tempNeurons = window.localStorage.getItem('originalNeurons');
-    window.localStorage.clear();
-    window.localStorage.setItem('originalNeurons', tempNeurons);
+    if(time != 0){
+      setNeurons(draft => draft = JSON.parse(window.localStorage.getItem('originalNeurons')));
+      setTime(0);
+      setIsPlaying(false);
+      setHasEnded(false);
+      var tempNeurons = window.localStorage.getItem('originalNeurons');
+      window.localStorage.clear();
+      window.localStorage.setItem('originalNeurons', tempNeurons);
+    }
   }
 
   const [guidedRules, setGuidedRules] = useState({});
