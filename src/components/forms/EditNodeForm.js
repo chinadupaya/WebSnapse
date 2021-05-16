@@ -7,6 +7,10 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
     const [rules, setRules] = useState('');
     const [startingSpikes, setStartingSpikes] = useState(0);
     const handleClose = () => {
+        setNeuronId(null);
+        setRules(null);
+        setStartingSpikes(null);
+        //console.log(neuronId, rules, startingSpikes);
         handleCloseEditModal();
     };
     useEffect(() => {
@@ -17,10 +21,10 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
             if (!neurons[e].isOutput) r[e] = neurons[e];
             return r;
         }, {});
-        var keys = Object.keys(filteredObject);
-        setNeuronId(keys[0]);
-        setRules(filteredObject[keys[0]].rules);
-        setStartingSpikes(filteredObject[keys[0]].startingSpikes);
+        //var keys = Object.keys(filteredObject);
+        //setNeuronId(keys[0]);
+        //setRules(filteredObject[keys[0]].rules);
+        //setStartingSpikes(filteredObject[keys[0]].startingSpikes);
     }
     var filteredObject = Object.keys(neurons).reduce(function (r, e) {
         if (!neurons[e].isOutput) r[e] = neurons[e];
@@ -30,16 +34,16 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
         <option value={neuron} key={neuron}>{neuron}</option>)
     )
     function handleSelectChange(event) {
-        //console.log(event.target.value);
         let id = event.target.value;
-        setNeuronId(event.target.value);
+        setNeuronId(id);
         setRules(neurons[id].rules);
         setStartingSpikes(neurons[id].startingSpikes);
     }
     function handleSubmit(event) {
+        console.log(neuronId, rules, startingSpikes);
         event.preventDefault();
         console.log(neuronId, rules, startingSpikes);
-        if (!neuronId) {
+        if (!neuronId || neuronId == '-1') {
             handleError("Please select a node to edit");
             return;
         }
@@ -68,8 +72,9 @@ const EditNodeForm = ({ showEditModal, handleCloseEditModal, handleEditNode, han
             <Modal.Body>
                 <Form onSubmit={handleSubmit} data-testid="edit-node-form">
                     <Form.Group>
-                        <Form.Label>Select node to edit</Form.Label>
-                        <Form.Control required data-testid="select-option" as="select" value={neuronId} onChange={handleSelectChange}>
+                        <Form.Label>Node</Form.Label>
+                        <Form.Control required data-testid="select-option" as="select" defaultValue={-1} onChange={handleSelectChange}>
+                            <option disabled value={-1} key={-1}>Select a node</option>
                             {neuronOptions}
                         </Form.Control>
                     </Form.Group>
