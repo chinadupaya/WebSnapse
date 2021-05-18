@@ -76,7 +76,13 @@ const styles = [
           'line-color': 'magenta',
           'line-style': 'dashed',
           'target-arrow-color': 'magenta',
-          width: 3
+          'line-color': 'magenta',
+          'line-style': 'dashed',
+          'target-arrow-color': 'magenta',
+          width: 4,
+          'line-dash-offset': 3,
+          'line-dash-pattern': [15,3],
+          'arrow-scale': 1.5
         }
     }
 ]
