@@ -37,6 +37,46 @@ export const createNeuron = (newId, x,
         position: { x: x, y: y + 90 },
         classes: 'snapse-node__time'
     }];
+
+export const createClosedNeuron = (newId, x,
+        y,
+        rules,
+        spike,
+        time) => [{
+            data: {
+                id: newId,
+                label: `${(newId.includes('-'))? newId.substr(0, newId.indexOf('-')) : newId}`
+            },
+            position: { x: x, y: y },
+            classes: 'snapse-node__closed'
+        },
+        {
+            data: {
+                id: newId + '-rules',
+                parent:newId,
+                label: rules.replace(/ /g, "\n").replace(/->/g, "→")
+            },
+            position: { x: x, y: y },
+            classes: 'snapse-node__rules__closed'
+        },
+        {
+            data: {
+                id: newId + '-spike',
+                parent: newId,
+                label: spike
+            },
+            position: { x: x, y: y - 60 },
+            classes: 'snapse-node__spike__closed'
+        },
+        {
+            data: {
+                id: newId + '-time',
+                parent: newId,
+                label: time
+            },
+            position: { x: x, y: y + 90 },
+            classes: 'snapse-node__time__closed'
+        }];
 export const createOutputNeuron = (id,x,y,output,spike) => [
     {
         data: { rootId: id, id: `${id}`, label: `${(id.includes('-'))? id.substr(0, id.indexOf('-')) : id}`},
@@ -98,8 +138,13 @@ export const convertElements = elements =>{
     }
     for (var k in elements) {
         var element = elements[k];
-        //console.log(element);
-        if(!element.isOutput){
+        if (element.currentRule){
+            var newNodes = createClosedNeuron(element.id, element.position.x, element.position.y,element.rules, element.spikes, element.delay);
+            array.nodes.push(newNodes[0])
+            array.nodes.push(newNodes[1])
+            array.nodes.push(newNodes[2])
+            array.nodes.push(newNodes[3])
+        }else if(!element.isOutput){
             var newNodes = createNeuron(element.id, element.position.x,element.position.y,element.rules, element.spikes, element.delay);
             array.nodes.push(newNodes[0])
             array.nodes.push(newNodes[1])

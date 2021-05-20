@@ -13,6 +13,20 @@ const styles = [
         }
     },
     {
+        selector: '.snapse-node__closed',
+        style: {
+            'font-family': 'Computer Modern',
+            'background-opacity': '0',
+            'padding-top': '0',
+            'border-width': 0,
+            'text-halign': 'left',
+            'text-valign': 'top',
+            'background-color':'gray',
+            color: 'black',
+            content: 'data(label)'
+        }
+    },
+    {
         selector: '.snapse-node__rules, .snapse-node__output',
         style: {
             'font-family': 'Computer Modern',
@@ -31,7 +45,39 @@ const styles = [
         }
     },
     {
+        selector: '.snapse-node__rules__closed',
+        style: {
+            'font-family': 'Computer Modern',
+            'font-style':'italic',
+            'background-color': 'gray',
+            'border-width': 3,
+            events: 'no',
+            'text-wrap': 'wrap',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            'text-wrap':'wrap',
+            content: 'data(label)',
+            height: 150,
+            shape: 'roundrectangle',
+            width: 100
+        }
+    },
+    {
         selector: '.snapse-node__time, .snapse-node__spike',
+        style: {
+            'font-family': 'Computer Modern',
+            'background-opacity': '0',
+            'text-halign': 'center',
+            'text-valign': 'center',
+            content: 'data(label)',
+            events: 'no',
+            height: 15,
+            shape: 'roundrectangle',
+            width: 50
+        }
+    },
+    {
+        selector: '.snapse-node__time__closed, .snapse-node__spike__closed',
         style: {
             'font-family': 'Computer Modern',
             'background-opacity': '0',
@@ -79,7 +125,7 @@ const styles = [
           'line-color': 'magenta',
           'line-style': 'dashed',
           'target-arrow-color': 'magenta',
-          width: 4,
+          'width': 4,
           'line-dash-offset': 3,
           'line-dash-pattern': [15,3],
           'arrow-scale': 1.5
