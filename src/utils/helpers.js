@@ -32,7 +32,7 @@ export const createNeuron = (newId, x,
         data: {
             id: newId + '-time',
             parent: newId,
-            label: time
+            label: `${(time < 0)? '!': time}`
         },
         position: { x: x, y: y + 90 },
         classes: 'snapse-node__time'
