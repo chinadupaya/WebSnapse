@@ -39,3 +39,8 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+## Troubleshooting
+- If the screen is completely blank, try clearing your local history in the web
+  browser. This issue may be due to an XML file being formatted incorrectly yet
+  saved by the system. 
