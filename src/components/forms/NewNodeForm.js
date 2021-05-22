@@ -35,6 +35,8 @@ const NewNodeForm = ({ showNewNodeModal, handleCloseModal, handleNewNode, handle
     event.preventDefault();
     let newId = `${formData.id}-${shortid.generate()}`;
 
+    // Add function that changes i and j to rules
+
     if (allRulesValid(formData.rules)) {
       console.log("All rules valid");
       handleClose();
