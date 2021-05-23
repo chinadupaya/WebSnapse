@@ -16,9 +16,9 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
         var state = JSON.parse(localStorage.getItem(i+"sec"));
         for(var k in state){
             if(state[k].chosenRule){
-                neuronCells.push(TableCell(state[k].chosenRule));
+                neuronCells.push(TableCell(state[k].chosenRule.replace(/->/g, "→")));
             }else{
-                neuronCells.push(TableCell("No chosen rule"));
+                neuronCells.push(TableCell("No applicable rule."));
             }
         }
         neuronRows.push(TableRow(neuronCells, i));
@@ -27,8 +27,9 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
     return(
         <Modal show={showChoiceHistoryModal} 
         onHide={handleCloseHoiceHistoryModal} 
-        className="custom-choice-history-modal">
-                <Table striped bordered hover data-testid="choice-history-table">
+        className="custom-choice-history-modal"
+        size="lg">
+                <Table className="choicehistory" striped bordered hover data-testid="choice-history-table">
                     <thead>
                         <tr>
                             <th>Time</th>
