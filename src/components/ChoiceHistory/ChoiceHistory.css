@@ -1,25 +1,13 @@
 div.modal-content{
     overflow-x:scroll;
     overflow-y: scroll;
+    
+    max-height: 600px;
 }
 
 td {
     width:1px;
     white-space:nowrap;
-}
-
-.custom-choice-history-modal{
-    margin-top: 1%;
-    margin-bottom: 1%;
-    height: 95%;
-}
-.time{
-    background-color:#596275;
-    left: 0;
-    position: sticky;
-    z-index: 9999;
-    color:#ffff;
-    text-align: center;
 }
 
 th {
@@ -29,6 +17,22 @@ th {
     width: 50%;
     background-color: #786fa6;
     color: #ffff;
+}
+
+table{
+    position: relative;
+}
+
+.custom-choice-history-modal{
+    height: 95%;
+}
+.time{
+    background-color:#596275;
+    left: 0;
+    position: sticky;
+    z-index: 9999;
+    color:#ffff;
+    text-align: center;
 }
 
 .choicehistory {
