@@ -141,8 +141,6 @@ function App() {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleCloseChooseRuleModal = () => setShowChooseRuleModal(false);
-  const handleShowChoiceHistoryModal = () => setShowChoiceHistoryModal(true);
-  const handleCloseHoiceHistoryModal = () => setShowChoiceHistoryModal(false);
   // Menu Handles
   const handleShowDropdownBasic = () => setShowDropdownBasic(true);
   const handleCloseDropdownBasic = () => setShowDropdownBasic(false);
@@ -154,6 +152,9 @@ function App() {
   const [restartTutorial, setRestartTutorial] = useState(false);
   const handleTrueRestartTutorial = () => setRestartTutorial(true);
   const handleFalseRestartTutorial = () => setRestartTutorial(false);
+
+  const handleShowChoiceHistoryModal = () => {setShowChoiceHistoryModal(true); setShowSideBarMenu(false);}
+  const handleCloseHoiceHistoryModal = () => setShowChoiceHistoryModal(false);
 
   const handleSimulationEnd = () => {
     setHasEnded(true);
@@ -378,6 +379,7 @@ function App() {
     if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
       setTime(time => time + 1);
+      console.log(neurons);
     } else {
       alert("Simulation has ended.");
     }
@@ -558,7 +560,7 @@ function App() {
               headless={headless} />
             <ChoiceHistory time={time}
               showChoiceHistoryModal={showChoiceHistoryModal}
-              handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal} />
+              handleCloseHoiceHistoryModal={handleCloseHoiceHistoryModal}/>
             <NewNodeForm showNewNodeModal={showNewNodeModal}
               handleCloseModal={handleClose}
               handleNewNode={handleNewNode}

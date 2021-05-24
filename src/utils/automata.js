@@ -64,6 +64,7 @@ export function step(neurons, time, isRandom, handleStartGuidedMode, handleSimul
             var neuron = draft[k];
             //choose rule to follow if not working on a rule currently
             if (!neuron.currentRule && !neuron.isOutput) {
+                delete draft[neuron.id].chosenRule;
                 delete draft[neuron.id].currentRule;
                 //pick a rule
                 var rules = neuron.rules.split(' ');

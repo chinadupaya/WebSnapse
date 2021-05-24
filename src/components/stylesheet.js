@@ -130,6 +130,6 @@ const styles = [
           'line-dash-pattern': [15,3],
           'arrow-scale': 1.5
         }
-    }
+    },
 ]
 export default styles;
