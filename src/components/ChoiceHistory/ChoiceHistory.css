@@ -6,6 +6,24 @@ td {
     width:1px;
     white-space:nowrap;
 }
+.time{
+    /* Background color */
+    background-color:#596275;
+    /* Stick to the left */
+    left: 0;
+    position: sticky;
+
+    /* Displayed on top of other rows when scrolling */
+    z-index: 9999;
+
+    color:#ffff;
+    text-align: center;
+}
+
+.choice-history-header{
+    background-color: #786fa6;
+    color: #ffff;
+}
 
 .choicehistory {
     table-layout: auto;

@@ -5,18 +5,20 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
     var neuronIds = <td>There are no neurons</td>;
     if(getLatestState){
         neuronIds = Object.keys(getLatestState).map((neuron)=>(
-            <th key={neuron}>{neuron}</th>)
+            <th className="choice-history-header" key={neuron}>{`${(neuron.includes('-'))? neuron.substr(0, neuron.indexOf('-')) : neuron}`}</th>)
         )
     }
     var neuronRows = [];
     
     for(var i = 0; i<time; i++){
         var neuronCells=[];
-        neuronCells.push(TableCell(i));
+        neuronCells.push(<td className="time"> {i} </td>);
         var state = JSON.parse(localStorage.getItem(i+"sec"));
         for(var k in state){
             if(state[k].chosenRule){
                 neuronCells.push(TableCell(state[k].chosenRule.replace(/->/g, "→")));
+            }else if(state[k].isOutput){
+                neuronCells.push(TableCell(`${(typeof state[k].bitstring === 'string') ? state[k].bitstring.replace(/\[object Object\]/g,'') : ''}`));
             }else{
                 neuronCells.push(TableCell("No applicable rule."));
             }
@@ -32,7 +34,7 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
                 <Table className="choicehistory" striped bordered hover data-testid="choice-history-table">
                     <thead>
                         <tr>
-                            <th>Time</th>
+                            <th className="time">Time</th>
                             {neuronIds}
                         </tr>
                     </thead>
