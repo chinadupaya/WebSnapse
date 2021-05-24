@@ -8,6 +8,7 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
             <th className="choice-history-header" key={neuron}>{`${(neuron.includes('-'))? neuron.substr(0, neuron.indexOf('-')) : neuron}`}</th>)
         )
     }
+    
     var neuronRows = [];
     
     for(var i = 0; i<time; i++){
@@ -30,7 +31,9 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
         <Modal show={showChoiceHistoryModal} 
         onHide={handleCloseHoiceHistoryModal} 
         className="custom-choice-history-modal"
-        size="lg">
+        size="lg"
+        centered
+        >
                 <Table className="choicehistory" striped bordered hover data-testid="choice-history-table">
                     <thead>
                         <tr>

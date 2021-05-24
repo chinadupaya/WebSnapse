@@ -1,26 +1,32 @@
 div.modal-content{
     overflow-x:scroll;
+    overflow-y: scroll;
 }
 
 td {
     width:1px;
     white-space:nowrap;
 }
+
+.custom-choice-history-modal{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    height: 95%;
+}
 .time{
-    /* Background color */
     background-color:#596275;
-    /* Stick to the left */
     left: 0;
     position: sticky;
-
-    /* Displayed on top of other rows when scrolling */
     z-index: 9999;
-
     color:#ffff;
     text-align: center;
 }
 
-.choice-history-header{
+th {
+    top: 0;
+    position: sticky;
+    z-index: 9998;
+    width: 50%;
     background-color: #786fa6;
     color: #ffff;
 }

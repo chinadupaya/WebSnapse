@@ -379,7 +379,7 @@ function App() {
     if (!hasEnded) {
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
       setTime(time => time + 1);
-      console.log(neurons);
+      console.log(`Local storage space used: ${JSON.stringify(localStorage).length * 2}`);
     } else {
       alert("Simulation has ended.");
     }

@@ -84,12 +84,12 @@ export const createOutputNeuron = (id,x,y,output,spike) => [
         position: { x: 0, y: 0 }
       },
       {
-        data: { rootId: id, id: `${id}-output`, parent: id, label: `${(typeof output === 'string') ? output.replace(/\[object Object\]/g,'') : ''}`},
+        data: { rootId: id, id: `${id}-output`, parent: id, label: `${(typeof output === 'string') ? output.replace(/\[object Object\]/g,'').replaceAll(/(.{12})/g,'$&\n') : ''}`},
         classes: 'snapse-node__output',
         position: { x, y: y }
       },
       {
-        data: { rootId: id, id: `${id}-spike`, parent: id, label: spike },
+        data: { rootId: id, id: `${id}-spike`, parent: id, label: '' },
         classes: 'snapse-node__spike',
         position: { x, y: y + 40 }
       }
