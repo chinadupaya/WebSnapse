@@ -4,7 +4,7 @@ import { slide as Menu } from 'react-burger-menu'
 import { useState, useEffect, useRef } from "react";
 import { useImmer } from "use-immer";
 import { Button, Container, Alert, Row, Col, Form, OverlayTrigger, Tooltip, Dropdown, DropdownButton } from 'react-bootstrap';
-import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill, ClockHistory, PlusSquare, Save2 } from 'react-bootstrap-icons';
+import { PlayFill, PauseFill, SkipForwardFill, SkipBackwardFill, QuestionCircle, ClockFill, ClockHistory, PlusSquare, Save2, WindowSidebar } from 'react-bootstrap-icons';
 import styled, { css, keyframes } from 'styled-components'
 import Snapse from "./components/Snapse/Snapse";
 import shortid from 'shortid';
@@ -112,6 +112,8 @@ function App() {
       bitstring: ' '
     }
   });
+
+
   const [time, setTime] = useState(0);
   const [isRandom, setIsRandom] = useState(true);
   const [fileName, setFileName] = useState('');
@@ -367,19 +369,23 @@ function App() {
         }
       }
     });
-    setIsPlaying(true); // continue playing after choosing rule
+    //setIsPlaying(true); // continue playing after choosing rule
   }
   const onForward = async () => {
     if (time == 0) {
       //copy
       console.log("Time is: " + time);
       window.localStorage.setItem('originalNeurons', JSON.stringify(JSON.parse(JSON.stringify(neurons))));
+      window.localStorage.setItem('shouldTimeStep', "1");
       console.log("Original neurons on time = 1 ", window.localStorage.getItem('originalNeurons'));
     }
     if (!hasEnded) {
+      console.log("Time is: " + time);
       await setNeurons(neurons => step(neurons, time, isRandom, handleStartGuidedMode, handleSimulationEnd));
-      setTime(time => time + 1);
-      console.log(neurons);
+      if(window.localStorage.getItem('shouldTimeStep') == "1"){
+        setTime(time => time + 1);
+      }
+      console.log(`Local storage space used: ${JSON.stringify(localStorage).length * 2}`);
     } else {
       alert("Simulation has ended.");
     }

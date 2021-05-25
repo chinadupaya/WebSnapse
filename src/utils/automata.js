@@ -95,6 +95,7 @@ export function step(neurons, time, isRandom, handleStartGuidedMode, handleSimul
         }
         if (Object.keys(neuronValidRules).length > 0) {
             //console.log(neuronValidRules);
+            window.localStorage.setItem('shouldTimeStep', "0");
             handleStartGuidedMode(neuronValidRules);
             return;
         }
@@ -150,6 +151,7 @@ export function step(neurons, time, isRandom, handleStartGuidedMode, handleSimul
         if (shouldEnd) {
             handleSimulationEnd();
         }
+        window.localStorage.setItem('shouldTimeStep', "1");
 
     })
     localStorage.setItem(time + 'sec', JSON.stringify(newStates));

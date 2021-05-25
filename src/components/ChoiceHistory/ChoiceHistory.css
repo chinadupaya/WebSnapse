@@ -1,10 +1,38 @@
 div.modal-content{
     overflow-x:scroll;
+    overflow-y: scroll;
+    
+    max-height: 600px;
 }
 
 td {
     width:1px;
     white-space:nowrap;
+}
+
+th {
+    top: 0;
+    position: sticky;
+    z-index: 9998;
+    width: 50%;
+    background-color: #786fa6;
+    color: #ffff;
+}
+
+table{
+    position: relative;
+}
+
+.custom-choice-history-modal{
+    height: 95%;
+}
+.time{
+    background-color:#596275;
+    left: 0;
+    position: sticky;
+    z-index: 9999;
+    color:#ffff;
+    text-align: center;
 }
 
 .choicehistory {
