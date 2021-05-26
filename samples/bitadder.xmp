@@ -21,7 +21,6 @@
         <spikes>2</spikes>
         <isOutput>false</isOutput>
         <out>n2-Tx5pOCJeb</out>
-        <out>n1-ItXCNFOva</out>
     </n0-phVoNyY4r>
     <n1-ItXCNFOva>
         <id>n1-ItXCNFOva</id>
@@ -32,10 +31,9 @@
         <rules>aaa/aa-&gt;a;0 a/a-&gt;a;0</rules>
         <startingSpikes>1</startingSpikes>
         <delay>0</delay>
-        <spikes>1</spikes>
+        <spikes>3</spikes>
         <isOutput>false</isOutput>
         <out>n2-Tx5pOCJeb</out>
-        <out>n0-phVoNyY4r</out>
     </n1-ItXCNFOva>
     <n2-Tx5pOCJeb>
         <id>n2-Tx5pOCJeb</id>
@@ -46,7 +44,7 @@
         <rules>a/a-&gt;a;0 aa/a-&gt;0;0 aaa/aa-&gt;a;0</rules>
         <startingSpikes>3</startingSpikes>
         <delay>0</delay>
-        <spikes>3</spikes>
+        <spikes>0</spikes>
         <isOutput>false</isOutput>
         <out>n4</out>
     </n2-Tx5pOCJeb>
