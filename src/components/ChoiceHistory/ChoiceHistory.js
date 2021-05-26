@@ -36,7 +36,7 @@ const ChoiceHistory = ({time,showChoiceHistoryModal,handleCloseHoiceHistoryModal
                 <Table className="choicehistory" striped bordered hover data-testid="choice-history-table">
                     <thead>
                         <tr>
-                            <th className="time">Time</th>
+                            <th className="headtime">Time</th>
                             {neuronIds}
                         </tr>
                     </thead>
