@@ -499,9 +499,9 @@ function App() {
                     <Form>
                       <Form.Group id="formGridCheckbox">
                         <Row>
-                          <Col sm={6}>
+                          <Col sm={8}>
                             <Form.Check type="checkbox"
-                              label="Pseudorandom"
+                              label="Pseudorandom Mode"
                               defaultChecked={isRandom}
                               onChange={() => {
                                 setIsRandom(!isRandom)
@@ -552,7 +552,7 @@ function App() {
                     </Dropdown>
                   </div>
                 </Col>
-                <Col style={{ textAlign: "right" }}><Button variant="danger" onClick={handleReset}>Restart</Button>{' '}</Col>
+                <Col style={{ textAlign: "right" }}><Button variant="danger" onClick={handleReset}>Restart Simulation</Button>{' '}</Col>
               </Row>
             </div>
             <hr />
