@@ -16,7 +16,6 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
         setNeuronId(event.target.value);
     }
     function handleSubmit(event) {
-        console.log("NeuronId", neuronId);
         event.preventDefault();
         if(neuronId!==''){
             
@@ -43,7 +42,8 @@ const DeleteNodeForm = ({ showDeleteModal, handleCloseDeleteModal, handleDeleteN
                 <Form onSubmit={handleSubmit}>
                     <Form.Group>
                         <Form.Label>Select node to delete</Form.Label>
-                        <Form.Control as="select" value={neuronId} onChange={handleSelectChange}>
+                        <Form.Control as="select" defaultValue={-1} onChange={handleSelectChange}>
+                            <option disabled value={-1} key={-1}>Select a node</option>
                             {neuronOptions}
                         </Form.Control>
                     </Form.Group>
