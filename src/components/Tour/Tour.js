@@ -345,7 +345,7 @@ const Tour = ({handleShowDropdownBasic, handleCloseDropdownBasic, handleShowSide
       handleShowSideBarMenu();
     } else if (index === 17){
       handleCloseSideBarMenu();
-      //setTourViewed();
+      setTourViewed();
     }
   };
 
